@@ -168,7 +168,7 @@ function MultipleChoiceForm({
                 </button>
                 <div className='flex justify-end pt-6'>
                   <button type='submit' className='btn-primary'>
-                    Save
+                    Add Question
                   </button>
                 </div>
               </form>

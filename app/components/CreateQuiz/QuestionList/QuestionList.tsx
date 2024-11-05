@@ -11,7 +11,16 @@ import {SiTicktick} from 'react-icons/si';
 import {MultipleChoiceQuestion} from '../shared/types/types';
 import {alphabet} from '../shared/constants/constants';
 
-function QuestionList({questions}: {questions: MultipleChoiceQuestion[]}) {
+function QuestionList({
+  questions,
+  onFinish,
+}: {
+  questions: MultipleChoiceQuestion[];
+  onFinish: (questions: MultipleChoiceQuestion[]) => void;
+}) {
+  const handleFinish = () => {
+    onFinish(questions);
+  };
   return (
     <div className='min-h-[calc(100vh-124px)]'>
       <Card className=' px-6 py-8'>
@@ -49,6 +58,11 @@ function QuestionList({questions}: {questions: MultipleChoiceQuestion[]}) {
             </AccordionItem>
           ))}
         </Accordion>
+        <div className='flex justify-end pt-6'>
+          <button type='button' className='btn-primary' onClick={handleFinish}>
+            Finish Quiz
+          </button>
+        </div>
       </Card>
     </div>
   );
