@@ -3,6 +3,8 @@ import {useEffect, useState} from 'react';
 import CreateQuiz from '../components/CreateQuiz/CreateQuiz';
 import QuizIntro from '../components/CreateQuiz/QuizIntro/QuizIntro';
 import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/types';
+import axios from 'axios';
+import {create} from 'domain';
 
 const steps = [
   {
@@ -18,7 +20,10 @@ const steps = [
 function CreateQuizPage() {
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [quiz, setQuiz] = useState({});
+  const [quiz, setQuiz] = useState<{
+    name: string;
+    description: string;
+  }>({name: '', description: ''});
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
 
   useEffect(() => {
@@ -27,19 +32,43 @@ function CreateQuizPage() {
 
   const handleIntro = (data) => {
     const {name, description} = data;
-    setQuiz({
-      ...quiz,
-      intro: {
-        name,
-        description,
-      },
-    });
+    setQuiz((prev) => ({
+      ...prev,
+      name,
+      description,
+    }));
     setPreviousStep(currentStep);
     setCurrentStep((currentStep) => currentStep + 1);
   };
 
-  const handleFinish = (questions) => {
-    setQuiz({...quiz, questions: questions});
+  const handleFinish = () => {
+    console.log(questions);
+    const payload = {
+      ...quiz,
+      questions: {
+        create: questions.map((question) => {
+          return {
+            question: question.question,
+            answers: {
+              create: question.answers.map((answer) => ({
+                choice: answer.choice,
+                isCorrect: answer.isCorrect,
+              })),
+            },
+          };
+        }),
+      },
+      updatedAt: new Date(),
+    };
+    console.log(payload);
+    axios
+      .post('/api/multiple-choice', payload)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <div>

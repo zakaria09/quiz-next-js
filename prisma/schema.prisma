@@ -24,17 +24,17 @@ model Quiz {
 }
 
 model Question {
-  id       String   @id @default(uuid())
+  id       Int      @id @default(autoincrement())
   question String
   quiz     Quiz     @relation(fields: [quizId], references: [id])
-  quizId   Int      @unique // Foreign key for one-to-many relationship with Quiz
-  choices  Choice[] // One-to-Many relationship with Choice
+  quizId   Int // Foreign key for one-to-many relationship with Quiz
+  answers  Answer[] // One-to-Many relationship with Choice
 }
 
-model Choice {
-  id         Int      @id @default(autoincrement())
-  choice     String
-  question   Question @relation(fields: [questionId], references: [id])
-  questionId String   @unique
-  isCorrect  Boolean
+model Answer {
+  id        Int      @id @default(autoincrement())
+  choice    String
+  question  Question @relation(fields: [choiceId], references: [id])
+  choiceId  Int
+  isCorrect Boolean
 }
