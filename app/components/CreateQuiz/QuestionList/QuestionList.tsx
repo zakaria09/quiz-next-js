@@ -20,7 +20,7 @@ function QuestionList({
 }) {
   console.log(questions);
   return (
-    <div className='min-h-[calc(100vh-124px)]'>
+    <div>
       <Card className=' px-6 py-8'>
         <Accordion type='multiple'>
           {questions.map((question, index) => (

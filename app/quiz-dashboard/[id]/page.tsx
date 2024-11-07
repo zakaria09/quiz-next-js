@@ -1,9 +1,18 @@
 import QuestionList from '@/app/components/CreateQuiz/QuestionList/QuestionList';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {prisma} from '@/lib/prisma';
 import React from 'react';
+import {MdDeleteOutline, MdEdit} from 'react-icons/md';
+import {FaEye} from 'react-icons/fa';
+import Link from 'next/link';
 
-export default async function page({params}: {params: Promise<{id: string}>}) {
+export default async function Page({params}: {params: Promise<{id: string}>}) {
   const param = await params;
   const id = parseInt(param.id);
   const quiz = await prisma.quiz.findUnique({
@@ -28,6 +37,25 @@ export default async function page({params}: {params: Promise<{id: string}>}) {
         <CardContent>
           <p className='text-slate-600'>{quiz?.description}</p>
         </CardContent>
+        <CardFooter>
+          <div className='flex gap-4'>
+            <Link
+              href={`/quiz-intro/${quiz?.id}`}
+              className='btn-outline primary flex gap-1'
+            >
+              <FaEye className='self-center text-lg' />
+              Preview
+            </Link>
+            <button className='btn-outline secondary flex gap-1'>
+              <MdEdit className='self-center text-lg' />
+              Edit
+            </button>
+            <button className='btn-outline warn flex gap-1'>
+              <MdDeleteOutline className='self-center text-lg' />
+              Delete
+            </button>
+          </div>
+        </CardFooter>
       </Card>
       <div className='pt-8'>
         <QuestionList questions={questions} />

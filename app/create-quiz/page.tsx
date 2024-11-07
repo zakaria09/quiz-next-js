@@ -5,6 +5,7 @@ import QuizIntro from '../components/CreateQuiz/QuizIntro/QuizIntro';
 import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/types';
 import axios from 'axios';
 import {useRouter} from 'next/navigation';
+import {revalidatePath} from 'next/cache';
 
 const steps = [
   {
@@ -69,6 +70,7 @@ function CreateQuizPage() {
       .then((res) => {
         console.log(res);
         setLoading(false);
+        revalidatePath('/quiz-dashboard');
         router.push('/quiz-dashboard');
       })
       .catch((err) => {
