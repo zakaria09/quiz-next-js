@@ -68,7 +68,7 @@ function MultipleChoiceForm({
   };
 
   return (
-    <div className='min-h-[calc(100vh-124px)]'>
+    <div>
       <div className='py-8'>
         <Card className=' px-6 py-8'>
           <CardHeader>

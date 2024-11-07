@@ -4,7 +4,7 @@ import CreateQuiz from '../components/CreateQuiz/CreateQuiz';
 import QuizIntro from '../components/CreateQuiz/QuizIntro/QuizIntro';
 import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/types';
 import axios from 'axios';
-import {create} from 'domain';
+import {useRouter} from 'next/navigation';
 
 const steps = [
   {
@@ -18,6 +18,8 @@ const steps = [
 ];
 
 function CreateQuizPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [quiz, setQuiz] = useState<{
@@ -43,6 +45,7 @@ function CreateQuizPage() {
 
   const handleFinish = () => {
     console.log(questions);
+    setLoading(true);
     const payload = {
       ...quiz,
       questions: {
@@ -65,6 +68,8 @@ function CreateQuizPage() {
       .post('/api/multiple-choice', payload)
       .then((res) => {
         console.log(res);
+        setLoading(false);
+        router.push('/quiz-dashboard');
       })
       .catch((err) => {
         console.log(err);
@@ -116,6 +121,7 @@ function CreateQuizPage() {
           questions={questions}
           setQuestions={setQuestions}
           onFinish={handleFinish}
+          isLoading={loading}
         />
       )}
     </div>

@@ -13,14 +13,12 @@ import {alphabet} from '../shared/constants/constants';
 
 function QuestionList({
   questions,
-  onFinish,
+  children,
 }: {
   questions: MultipleChoiceQuestion[];
-  onFinish: (questions: MultipleChoiceQuestion[]) => void;
+  children?: React.ReactNode;
 }) {
-  const handleFinish = () => {
-    onFinish(questions);
-  };
+  console.log(questions);
   return (
     <div className='min-h-[calc(100vh-124px)]'>
       <Card className=' px-6 py-8'>
@@ -58,11 +56,7 @@ function QuestionList({
             </AccordionItem>
           ))}
         </Accordion>
-        <div className='flex justify-end pt-6'>
-          <button type='button' className='btn-primary' onClick={handleFinish}>
-            Finish Quiz
-          </button>
-        </div>
+        {children}
       </Card>
     </div>
   );

@@ -59,8 +59,12 @@ export default function NavBar() {
             )}
           >
             <li>
-              <Link className='link' href={'/blog'} onClick={handleToggleNav}>
-                Blog
+              <Link
+                className='link'
+                href={'/quiz-dashboard'}
+                onClick={handleToggleNav}
+              >
+                Quizzes
               </Link>
             </li>
             <li>
