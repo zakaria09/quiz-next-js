@@ -1,5 +1,6 @@
 import {prisma} from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   const body = await req.json();
 
@@ -19,10 +20,16 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const body = await req.json();
+  console.log(body);
   try {
-    const quizzes = await prisma.quiz.findMany();
-    return Response.json(quizzes);
+    const answers = await prisma.answer.findMany({
+      where: {
+        choiceId: body.quizId,
+      },
+    });
+    Response.json({answers, status: 200});
   } catch (error) {
     return Response.json(
       {error, message: 'Failed to create quiz'},
