@@ -36,6 +36,7 @@ export default async function QuizIntroPage({
   });
   return (
     <div className='py-8'>
+      {JSON.stringify(quiz?.questions)}
       <Card>
         <CardHeader>
           <CardTitle className='text-2xl font-bold'>{quiz?.name}</CardTitle>
@@ -47,7 +48,7 @@ export default async function QuizIntroPage({
         <CardFooter>
           <div className='flex gap-4'>
             <Link
-              href={`/take-quiz/${quiz?.questions[0].id}`}
+              href={`/take-quiz/${quiz?.id}`}
               className='btn-primary flex gap-1'
             >
               <FaRegArrowAltCircleRight className='self-center text-lg' />

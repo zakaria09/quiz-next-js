@@ -1,5 +1,6 @@
 import {prisma} from '@/lib/prisma';
 import React from 'react';
+import MultipleChoice from './_components/MultipleChoice';
 
 export default async function TakeQuizPage({
   params,
@@ -12,11 +13,6 @@ export default async function TakeQuizPage({
     where: {
       quizId: id,
     },
-    take: 1,
-    skip: 1,
-    cursor: {
-      id: id,
-    },
     include: {
       answers: {
         select: {
@@ -27,5 +23,5 @@ export default async function TakeQuizPage({
       },
     },
   });
-  return <div>{JSON.stringify(questions)}</div>;
+  return <MultipleChoice questions={questions} />;
 }
