@@ -1,27 +1,26 @@
 import React from 'react';
-import {Choices} from '../MultipleChoice';
+import {choiceAnswers} from '@/app/components/CreateQuiz/shared/types/types';
 import classNames from 'classnames';
 import {alphabet} from '@/app/components/CreateQuiz/shared/constants/constants';
+import {Choices} from '../MultipleChoice';
 
-function ChoiceOptions({
-  answer,
-  selectedChoice,
+function ShowAnswer({
+  answers,
   index,
-  onSelectedChoice,
+  selectedChoice,
 }: {
-  answer: Choices;
-  selectedChoice?: Choices;
+  answers: choiceAnswers;
   index: number;
-  onSelectedChoice: (choice: Choices) => void;
+  selectedChoice?: Choices;
 }) {
   return (
-    <div key={answer.id} className='block group'>
+    <div key={answers.id} className='block group'>
       <button
-        onClick={() => onSelectedChoice(answer)}
         className={classNames(
           'option border-2 border-gray-300 rounded-lg p-4 cursor-pointer group-hover:border-indigo-600 transition-colors text-left w-full',
-          selectedChoice?.id === answer.id
-            ? 'border-indigo-600 bg-indigo-100 font-bold'
+          answers.isCorrect ? 'border-green-600 bg-green-100 font-bold' : '',
+          selectedChoice?.id === answers.id && !answers.isCorrect
+            ? 'border-red-600 bg-red-100 font-bold'
             : ''
         )}
       >
@@ -30,12 +29,12 @@ function ChoiceOptions({
           <span
             className={classNames(
               'text-gray-700 group-hover:text-indigo-700',
-              selectedChoice?.id === answer.id
+              selectedChoice?.id === answers.id
                 ? 'text-slate-950 group-hover:text-slate-950'
                 : ''
             )}
           >
-            {answer.choice}
+            {answers.choice}
           </span>
         </p>
       </button>
@@ -43,4 +42,4 @@ function ChoiceOptions({
   );
 }
 
-export default ChoiceOptions;
+export default ShowAnswer;

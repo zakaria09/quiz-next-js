@@ -1,4 +1,4 @@
-interface choiceAnswers {
+export interface choiceAnswers {
   id: string | number;
   choice: string;
   isCorrect: boolean;
