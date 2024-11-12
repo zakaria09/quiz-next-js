@@ -1,12 +1,17 @@
 'use client';
-import {Card, CardContent, CardFooter, CardHeader} from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 import React, {useState} from 'react';
 import ChoiceOptions from './ChoiceOptions/ChoiceOptions';
 import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import MoonLoader from 'react-spinners/MoonLoader';
 import ShowAnswer from './ShowAnswer/ShowAnswer';
-
 export interface Choices {
   id: string | number;
   choice: string;
@@ -18,28 +23,45 @@ export interface MultipleChoice {
   question: string;
   quizId?: number;
   answers: Choices[];
+  numOfCorrectAnswers: number;
 }
 
 function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
-  console.log(questions);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<Choices | undefined>();
+  const [selectedAnswers, setSelectedAnswers] = useState<Choices[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const {data, refetch, isLoading} = useQuery({
     queryKey: ['answers', currentIndex],
     queryFn: async () =>
-      (await axios.get(`/api/answers?quizId=${selectedAnswer?.choiceId}`))
-        ?.data,
+      (
+        await axios.post(`/api/answers`, {
+          quizIds: selectedAnswers?.map((answer) => answer.choiceId),
+        })
+      )?.data,
     enabled: false,
   });
 
-  console.log('data ->', data);
-
-  const {question, answers} = questions[currentIndex];
+  const {question, answers, numOfCorrectAnswers} = questions[currentIndex];
   const handleSelectedChoice = (choice: Choices) => {
-    console.log(choice);
-    setSelectedAnswer(choice);
+    if (numOfCorrectAnswers === 1) {
+      setSelectedAnswers([choice]);
+      return;
+    } else if (numOfCorrectAnswers > 1) {
+      checkAnswerIsSelected(choice);
+    }
+  };
+
+  const checkAnswerIsSelected = (choice: Choices) => {
+    const isSelected =
+      selectedAnswers.findIndex((answer) => answer.id === choice.id) >= 0;
+    if (!isSelected && selectedAnswers.length < numOfCorrectAnswers) {
+      setSelectedAnswers((prev) => [...prev, choice]);
+    } else {
+      setSelectedAnswers(
+        selectedAnswers.filter((selected) => selected.id !== choice.id)
+      );
+    }
   };
 
   const handleSubmit = () => {
@@ -48,7 +70,7 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
       refetch();
     } else {
       setCurrentIndex((prev) => prev + 1);
-      setSelectedAnswer(undefined);
+      setSelectedAnswers([]);
       setIsSubmitted(false);
     }
   };
@@ -56,7 +78,14 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
   return (
     <div className='pt-8'>
       <Card>
-        <CardHeader className='text-lg'>{question}</CardHeader>
+        <CardHeader className='text-lg'>
+          {question}
+          {numOfCorrectAnswers > 1 && (
+            <CardDescription className='font-semibold'>
+              Select at least {numOfCorrectAnswers}
+            </CardDescription>
+          )}
+        </CardHeader>
         <CardContent>
           <div className='space-y-4'>
             {!isSubmitted
@@ -64,7 +93,7 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
                   <ChoiceOptions
                     key={answer.id}
                     answer={answer}
-                    selectedChoice={selectedAnswer}
+                    selectedChoices={selectedAnswers}
                     index={index}
                     onSelectedChoice={handleSelectedChoice}
                   />
@@ -74,13 +103,13 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
                     key={answer.id}
                     answers={answer}
                     index={index}
-                    selectedChoice={selectedAnswer}
+                    selectedChoices={selectedAnswers}
                   />
                 ))}
           </div>
         </CardContent>
         <CardFooter>
-          {selectedAnswer && (
+          {selectedAnswers && (
             <div className='flex justify-start'>
               {!isLoading ? (
                 <button className='btn-primary' onClick={handleSubmit}>

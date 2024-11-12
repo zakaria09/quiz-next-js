@@ -1,20 +1,24 @@
 import {prisma} from '@/lib/prisma';
 import {NextResponse} from 'next/server';
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const quizId = url.searchParams.get('quizId');
-
-  if (!quizId) {
-    return new NextResponse(JSON.stringify({message: 'Quiz ID is required'}), {
-      status: 400,
-    });
-  }
-
+export async function POST(request: Request) {
   try {
+    const {quizIds} = await request.json();
+
+    if (!quizIds || !Array.isArray(quizIds) || quizIds.length === 0) {
+      return new NextResponse(
+        JSON.stringify({message: 'Quiz ID is required'}),
+        {
+          status: 400,
+        }
+      );
+    }
+
     const answers = await prisma.answer.findMany({
       where: {
-        choiceId: Number(quizId),
+        choiceId: {
+          in: quizIds, // Ensure `quizIds` is an array of IDs
+        },
       },
     });
 

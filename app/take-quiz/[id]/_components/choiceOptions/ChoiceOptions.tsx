@@ -5,12 +5,12 @@ import {alphabet} from '@/app/components/CreateQuiz/shared/constants/constants';
 
 function ChoiceOptions({
   answer,
-  selectedChoice,
+  selectedChoices,
   index,
   onSelectedChoice,
 }: {
   answer: Choices;
-  selectedChoice?: Choices;
+  selectedChoices: Choices[];
   index: number;
   onSelectedChoice: (choice: Choices) => void;
 }) {
@@ -20,7 +20,7 @@ function ChoiceOptions({
         onClick={() => onSelectedChoice(answer)}
         className={classNames(
           'option border-2 border-gray-300 rounded-lg p-4 cursor-pointer group-hover:border-indigo-600 transition-colors text-left w-full',
-          selectedChoice?.id === answer.id
+          selectedChoices.findIndex((choice) => choice.id === answer.id) >= 0
             ? 'border-indigo-600 bg-indigo-100 font-bold'
             : ''
         )}
@@ -30,7 +30,8 @@ function ChoiceOptions({
           <span
             className={classNames(
               'text-gray-700 group-hover:text-indigo-700',
-              selectedChoice?.id === answer.id
+              selectedChoices.findIndex((choice) => choice.id === answer.id) >=
+                0
                 ? 'text-slate-950 group-hover:text-slate-950'
                 : ''
             )}
