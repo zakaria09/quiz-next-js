@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.scss';
 import NavBar from './components/NavBar/NavBar';
 import ReactQueryProvider from '@/util/Providers';
+import {QuizStoreProvider} from '@/util/quiz-store-provider';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -32,7 +33,9 @@ export default function RootLayout({
       >
         <NavBar />
         <div className='container mx-auto'>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <QuizStoreProvider>
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </QuizStoreProvider>
         </div>
       </body>
     </html>

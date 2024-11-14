@@ -6,12 +6,15 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import ChoiceOptions from './ChoiceOptions/ChoiceOptions';
 import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import MoonLoader from 'react-spinners/MoonLoader';
 import ShowAnswer from './ShowAnswer/ShowAnswer';
+import {QuizStoreContext, useQuizStore} from '@/util/quiz-store-provider';
+import {useStore} from 'zustand';
+import {set} from 'react-hook-form';
 export interface Choices {
   id: string | number;
   choice: string;
@@ -30,6 +33,11 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Choices[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+  const selectedChoices = useQuizStore((store) => store.selectedChoices);
+  const setSelectedChoices = useQuizStore((store) => store.setselectedChoices);
+
+  console.log('selectedChoices state', selectedChoices);
 
   const {data, refetch, isLoading} = useQuery({
     queryKey: ['answers', currentIndex],
@@ -70,6 +78,7 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
       refetch();
     } else {
       setCurrentIndex((prev) => prev + 1);
+      setSelectedChoices(selectedAnswers);
       setSelectedAnswers([]);
       setIsSubmitted(false);
     }
