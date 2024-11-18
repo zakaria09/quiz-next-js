@@ -31,16 +31,20 @@ export async function GET(request: Request) {
   }
 
   try {
-    const questions = await prisma.question.findMany({
+    const quiz = await prisma.quiz.findUnique({
       where: {
-        quizId: Number(quizId),
+        id: Number(quizId),
       },
       include: {
-        answers: true,
+        questions: {
+          include: {
+            answers: true,
+          },
+        },
       },
     });
 
-    const questionsFormated = questions.map((question) => {
+    const questionsFormated = quiz?.questions.map((question) => {
       const numOfCorrectAnswers = question.answers.filter(
         (choice) => choice.isCorrect
       ).length;
@@ -48,11 +52,15 @@ export async function GET(request: Request) {
         id: answer.id,
         choice: answer.choice,
         choiceId: answer.choiceId,
+        isCorrect: answer.isCorrect,
       }));
       return {...question, answers: removeIsCorrect, numOfCorrectAnswers};
     });
 
-    return NextResponse.json({questions: questionsFormated}, {status: 200});
+    return NextResponse.json(
+      {...quiz, questions: questionsFormated},
+      {status: 200}
+    );
   } catch (error) {
     return NextResponse.json(
       {error: error, message: 'Failed to fetch answers'},

@@ -6,19 +6,20 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import ChoiceOptions from './ChoiceOptions/ChoiceOptions';
 import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import MoonLoader from 'react-spinners/MoonLoader';
 import ShowAnswer from './ShowAnswer/ShowAnswer';
-import {QuizStoreContext, useQuizStore} from '@/util/quiz-store-provider';
-import {useStore} from 'zustand';
-import {set} from 'react-hook-form';
+import {useQuizStore} from '@/util/quiz-store-provider';
+import QuizResult from './QuizResult/QuizResult';
+import {Quiz} from '@/app/types/quiz';
 export interface Choices {
-  id: string | number;
+  id: number;
   choice: string;
-  choiceId?: number;
+  choiceId: number;
+  isCorrect: boolean;
 }
 
 export interface MultipleChoice {
@@ -29,10 +30,11 @@ export interface MultipleChoice {
   numOfCorrectAnswers: number;
 }
 
-function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
+function MultipleChoice({quiz}: {quiz: Quiz}) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Choices[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  console.log(quiz);
 
   const selectedChoices = useQuizStore((store) => store.selectedChoices);
   const setSelectedChoices = useQuizStore((store) => store.setselectedChoices);
@@ -50,7 +52,10 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
     enabled: false,
   });
 
-  const {question, answers, numOfCorrectAnswers} = questions[currentIndex];
+  if (currentIndex === quiz.questions.length)
+    return <QuizResult quizId={Number(quiz.id)} />;
+
+  const {question, answers, numOfCorrectAnswers} = quiz.questions[currentIndex];
   const handleSelectedChoice = (choice: Choices) => {
     if (numOfCorrectAnswers === 1) {
       setSelectedAnswers([choice]);
@@ -83,6 +88,8 @@ function MultipleChoice({questions}: {questions: MultipleChoice[]}) {
       setIsSubmitted(false);
     }
   };
+
+  console.log(currentIndex);
 
   return (
     <div className='pt-8'>

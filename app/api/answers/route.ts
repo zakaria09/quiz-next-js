@@ -30,3 +30,35 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const quizId = url.searchParams.get('quizId');
+  if (!quizId) {
+    return new NextResponse(JSON.stringify({message: 'Quiz ID is required'}), {
+      status: 400,
+    });
+  }
+
+  try {
+    const quizAnswers = await prisma.quiz.findUnique({
+      where: {
+        id: Number(quizId),
+      },
+      include: {
+        questions: {
+          include: {
+            answers: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(quizAnswers, {status: 200});
+  } catch (error) {
+    return NextResponse.json(
+      {error: error, message: 'Failed to fetch answers'},
+      {status: 500}
+    );
+  }
+}

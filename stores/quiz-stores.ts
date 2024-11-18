@@ -1,17 +1,18 @@
 import {createStore} from 'zustand';
 
-interface Choices {
-  id: string | number;
+type Choices = {
+  id: number;
   choice: string;
-  choiceId?: number;
-}
+  choiceId: number;
+  isCorrect: boolean;
+};
 
-interface choiceAnswers {
-  id: string | number;
+type choiceAnswers = {
+  id: number;
   choice: string;
   isCorrect?: boolean;
-  choiceId?: number;
-}
+  choiceId: number;
+};
 
 export interface MultipleChoiceQuestion {
   id?: number;
@@ -25,19 +26,16 @@ export type QuizStore = QuizState & QuizActions;
 
 export type QuizState = {
   quizId: number | null;
-  questions: MultipleChoiceQuestion[];
   selectedChoices: Choices[];
 };
 
 export type QuizActions = {
   setQuizId: (quizId: number) => void;
-  setQuestions: (question: MultipleChoiceQuestion[]) => void;
   setselectedChoices: (selectedChoices: Choices[]) => void;
 };
 
 export const defaultInitialState: QuizState = {
   quizId: null,
-  questions: [],
   selectedChoices: [],
 };
 
@@ -48,7 +46,6 @@ export const createQuizStore = (initState: QuizState = defaultInitialState) =>
     selectedChoices: [],
     questions: [],
     setQuizId: (quizId: number) => set({quizId}),
-    setQuestions: (questions: MultipleChoiceQuestion[]) => set({questions}),
     setselectedChoices: (selectedChoices: Choices[]) =>
       set((state) => ({
         ...state,

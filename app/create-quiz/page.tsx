@@ -6,6 +6,8 @@ import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/type
 import axios from 'axios';
 import {useRouter} from 'next/navigation';
 import {revalidatePath} from 'next/cache';
+import {useMutation, useQuery} from '@tanstack/react-query';
+import {Quiz} from '@prisma/client';
 
 const steps = [
   {
@@ -29,9 +31,20 @@ function CreateQuizPage() {
   }>({name: '', description: ''});
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
 
-  useEffect(() => {
-    console.log(quiz);
-  }, [quiz]);
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await axios.post('/api/multiple-choice', data);
+      return response.data;
+    },
+    onSuccess: () => {
+      // Navigate to the quiz-dashboard on successful submission
+      router.push('/quiz-dashboard');
+    },
+    onError: (error) => {
+      console.error('Error creating quiz:', error);
+      alert('Failed to create the quiz. Please try again.');
+    },
+  });
 
   const handleIntro = (data) => {
     const {name, description} = data;
@@ -65,17 +78,7 @@ function CreateQuizPage() {
       updatedAt: new Date(),
     };
     console.log(payload);
-    axios
-      .post('/api/multiple-choice', payload)
-      .then((res) => {
-        console.log(res);
-        setLoading(false);
-        revalidatePath('/quiz-dashboard');
-        router.push('/quiz-dashboard');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    mutation.mutate(payload);
   };
   return (
     <div>
