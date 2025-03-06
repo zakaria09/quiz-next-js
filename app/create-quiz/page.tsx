@@ -1,13 +1,11 @@
 'use client';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import CreateQuiz from '../components/CreateQuiz/CreateQuiz';
 import QuizIntro from '../components/CreateQuiz/QuizIntro/QuizIntro';
 import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/types';
 import axios from 'axios';
 import {useRouter} from 'next/navigation';
-import {revalidatePath} from 'next/cache';
-import {useMutation, useQuery} from '@tanstack/react-query';
-import {Quiz} from '@prisma/client';
+import {useMutation} from '@tanstack/react-query';
 
 const steps = [
   {
@@ -23,7 +21,6 @@ const steps = [
 function CreateQuizPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [quiz, setQuiz] = useState<{
     name: string;
@@ -32,6 +29,7 @@ function CreateQuizPage() {
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
 
   const mutation = useMutation({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: async (data: any) => {
       const response = await axios.post('/api/multiple-choice', data);
       return response.data;
@@ -46,14 +44,13 @@ function CreateQuizPage() {
     },
   });
 
-  const handleIntro = (data) => {
+  const handleIntro = (data: {name: string; description: string}) => {
     const {name, description} = data;
     setQuiz((prev) => ({
       ...prev,
       name,
       description,
     }));
-    setPreviousStep(currentStep);
     setCurrentStep((currentStep) => currentStep + 1);
   };
 

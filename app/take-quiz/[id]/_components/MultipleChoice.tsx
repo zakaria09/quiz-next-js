@@ -15,6 +15,7 @@ import ShowAnswer from './ShowAnswer/ShowAnswer';
 import {useQuizStore} from '@/util/quiz-store-provider';
 import QuizResult from './QuizResult/QuizResult';
 import {Quiz} from '@/app/types/quiz';
+import {choiceAnswers} from '@/app/components/CreateQuiz/shared/types/types';
 export interface Choices {
   id: number;
   choice: string;
@@ -114,7 +115,7 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
                     onSelectedChoice={handleSelectedChoice}
                   />
                 ))
-              : data?.answers.map((answer, index) => (
+              : data?.answers.map((answer: choiceAnswers, index: number) => (
                   <ShowAnswer
                     key={answer.id}
                     answers={answer}

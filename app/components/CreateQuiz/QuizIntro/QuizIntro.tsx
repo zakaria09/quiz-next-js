@@ -37,6 +37,7 @@ function QuizIntro({
     },
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (data: any) => {
     onCompleteEmit(data);
   };

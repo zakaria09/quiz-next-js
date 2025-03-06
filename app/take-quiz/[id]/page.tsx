@@ -1,7 +1,5 @@
 import React from 'react';
 import MultipleChoice from './_components/MultipleChoice';
-import axios from 'axios';
-import {Quiz} from '@/app/types/quiz';
 import {prisma} from '@/lib/prisma';
 
 export default async function TakeQuizPage({
@@ -11,11 +9,6 @@ export default async function TakeQuizPage({
 }) {
   const param = await params;
   const id = param.id;
-  // const response = await (
-  //   await axios.get<Quiz>(
-  //     `${process.env.NEXT_PUBLIC_BASE_URL}/api/multiple-choice?quizId=${id}`
-  //   )
-  // ).data;
   const quiz = await prisma.quiz.findUnique({
     where: {
       id: Number(id),
