@@ -31,6 +31,7 @@ export default function DeleteBtn() {
     onSuccess: () => {
       // Boom baby!
       router.push('/quiz-dashboard');
+      router.refresh();
       console.log('success');
     },
   });
