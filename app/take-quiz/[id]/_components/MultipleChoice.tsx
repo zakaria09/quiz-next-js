@@ -7,7 +7,6 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 import React, {useState} from 'react';
-import ChoiceOptions from './ChoiceOptions/ChoiceOptions';
 import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import MoonLoader from 'react-spinners/MoonLoader';
@@ -16,6 +15,7 @@ import {useQuizStore} from '@/util/quiz-store-provider';
 import QuizResult from './QuizResult/QuizResult';
 import {Quiz} from '@/app/types/quiz';
 import {choiceAnswers} from '@/app/components/CreateQuiz/shared/types/types';
+import ChoiceOptions from '@/app/components/ChoiceOptions/ChoiceOptions';
 export interface Choices {
   id: number;
   choice: string;
