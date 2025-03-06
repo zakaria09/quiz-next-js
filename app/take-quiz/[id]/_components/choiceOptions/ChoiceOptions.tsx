@@ -3,7 +3,7 @@ import {Choices} from '../MultipleChoice';
 import classNames from 'classnames';
 import {alphabet} from '@/app/components/CreateQuiz/shared/constants/constants';
 
-function ChoiceOptions({
+export default function ChoiceOptions({
   answer,
   selectedChoices,
   index,
@@ -43,5 +43,3 @@ function ChoiceOptions({
     </div>
   );
 }
-
-export default ChoiceOptions;
