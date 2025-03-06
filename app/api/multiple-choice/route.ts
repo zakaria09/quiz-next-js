@@ -1,5 +1,4 @@
 import {prisma} from '@/lib/prisma';
-import {revalidatePath} from 'next/cache';
 import {NextResponse} from 'next/server';
 export const dynamic = 'force-dynamic';
 
@@ -111,8 +110,6 @@ export async function DELETE(request: Request) {
         id: Number(quizId),
       },
     });
-
-    revalidatePath('/quiz-dashboard');
 
     return Response.json({message: 'ok', status: 200});
   } catch (error) {

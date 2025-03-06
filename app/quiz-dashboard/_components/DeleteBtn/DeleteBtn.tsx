@@ -13,6 +13,7 @@ import {
 import {useParams, useRouter} from 'next/navigation';
 import {useMutation} from '@tanstack/react-query';
 import axios from 'axios';
+import {revalidateQuiz} from '@/lib/actions';
 
 const deleteQuiz = (id: string) =>
   axios.delete(`/api/multiple-choice?quizId=${id}`);
@@ -31,7 +32,6 @@ export default function DeleteBtn() {
     onSuccess: () => {
       // Boom baby!
       router.push('/quiz-dashboard');
-      router.refresh();
       console.log('success');
     },
   });
@@ -62,15 +62,17 @@ export default function DeleteBtn() {
             >
               Cancel
             </button>
-            <button
-              className='btn-outline warn'
-              onClick={() => {
-                console.log('Quiz deleted');
-                mutation.mutate();
-              }}
-            >
-              Delete
-            </button>
+            <form action={revalidateQuiz}>
+              <button
+                className='btn-outline warn'
+                onClick={() => {
+                  console.log('Quiz deleted');
+                  mutation.mutate();
+                }}
+              >
+                Delete
+              </button>
+            </form>
           </DialogFooter>
         </DialogContent>
       </Dialog>
