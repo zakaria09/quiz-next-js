@@ -15,6 +15,5 @@ export default async function TakeQuizPage({
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/multiple-choice?quizId=${id}`
     )
   ).data;
-  console.log(response);
   return <MultipleChoice quiz={response} />;
 }

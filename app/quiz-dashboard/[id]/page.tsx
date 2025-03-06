@@ -8,9 +8,10 @@ import {
 } from '@/components/ui/card';
 import {prisma} from '@/lib/prisma';
 import React from 'react';
-import {MdDeleteOutline, MdEdit} from 'react-icons/md';
+import {MdEdit} from 'react-icons/md';
 import {FaEye} from 'react-icons/fa';
 import Link from 'next/link';
+import DeleteBtn from '@/app/quiz-dashboard/_components/DeleteBtn/DeleteBtn';
 
 export default async function Page({params}: {params: Promise<{id: string}>}) {
   const param = await params;
@@ -50,10 +51,7 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
               <MdEdit className='self-center text-lg' />
               Edit
             </button>
-            <button className='btn-outline warn flex gap-1'>
-              <MdDeleteOutline className='self-center text-lg' />
-              Delete
-            </button>
+            <DeleteBtn />
           </div>
         </CardFooter>
       </Card>

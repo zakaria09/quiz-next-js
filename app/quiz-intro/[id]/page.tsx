@@ -36,7 +36,6 @@ export default async function QuizIntroPage({
   });
   return (
     <div className='py-8'>
-      {JSON.stringify(quiz?.questions)}
       <Card>
         <CardHeader>
           <CardTitle className='text-2xl font-bold'>{quiz?.name}</CardTitle>

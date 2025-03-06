@@ -6,9 +6,9 @@ import React from 'react';
 export default async function QuizDashboard() {
   const quizzes = await prisma.quiz.findMany();
   return (
-    <div>
+    <div className='py-6'>
       <h1 className='text-xl font-semibold my-6'>Quiz Dashboard</h1>
-      <div className='flex gap-6 '>
+      <div className='flex flex-col gap-6 '>
         {quizzes.map((quiz) => (
           <Link
             key={quiz.id}

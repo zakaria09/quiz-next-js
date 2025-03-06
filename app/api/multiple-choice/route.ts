@@ -68,3 +68,55 @@ export async function GET(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  const url = new URL(request.url);
+  const quizId = url.searchParams.get('quizId');
+
+  if (!quizId) {
+    return new NextResponse(JSON.stringify({message: 'Quiz ID is required'}), {
+      status: 400,
+    });
+  }
+
+  console.log(Number(quizId));
+
+  try {
+    // Step 1: Find all questions associated with the quiz
+    const questions = await prisma.question.findMany({
+      where: {quizId: Number(quizId)},
+      select: {id: true}, // Only fetch question IDs
+    });
+
+    // Step 2: Extract question IDs
+    const questionIds = questions.map((q) => q.id);
+    console.log(questionIds);
+
+    // Step 3: Delete all answers linked to those questions
+    await prisma.answer.deleteMany({
+      where: {choiceId: {in: questionIds}}, // Delete answers linked to questions
+    });
+
+    // Delete all questions and answers associated with the quiz
+    await prisma.question.deleteMany({
+      where: {
+        quizId: Number(quizId),
+      },
+    });
+
+    // Finally delete the quiz
+    await prisma.quiz.delete({
+      where: {
+        id: Number(quizId),
+      },
+    });
+
+    return Response.json({message: 'ok', status: 200});
+  } catch (error) {
+    console.log(error);
+    return Response.json(
+      {error, message: 'Failed to delete quiz'},
+      {status: 500}
+    );
+  }
+}
