@@ -13,7 +13,7 @@ import {
 import {useParams, useRouter} from 'next/navigation';
 import {useMutation} from '@tanstack/react-query';
 import axios from 'axios';
-import {revalidateQuiz} from '@/lib/actions';
+import {revalidateQuiz} from '@/actions/actions';
 
 const deleteQuiz = (id: string) =>
   axios.delete(`/api/multiple-choice?quizId=${id}`);

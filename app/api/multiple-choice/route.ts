@@ -1,4 +1,5 @@
 import {prisma} from '@/lib/prisma';
+import {revalidatePath} from 'next/cache';
 import {NextResponse} from 'next/server';
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,7 @@ export async function POST(req: Request) {
         ...body,
       },
     });
+    revalidatePath('/quiz-dashboard', 'page');
     return Response.json({message: 'ok', status: 200});
   } catch (error) {
     console.log(error);
