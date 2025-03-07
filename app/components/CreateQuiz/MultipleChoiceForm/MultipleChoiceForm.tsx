@@ -20,7 +20,6 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import classNames from 'classnames';
 import {MultipleChoiceQuestion} from '../shared/types/types';
 import {alphabet, defaultChoiceFields} from '../shared/constants/constants';
-import {revalidateQuiz} from '@/actions/actions';
 
 const formSchema = z.object({
   question: z.string().min(3, 'Please enter a question.'),
@@ -77,10 +76,7 @@ function MultipleChoiceForm({
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form
-                action={revalidateQuiz}
-                onSubmit={form.handleSubmit(onSubmit)}
-              >
+              <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                   control={form.control}
                   name='question'

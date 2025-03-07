@@ -3,9 +3,10 @@ import {useState} from 'react';
 import CreateQuiz from '../components/CreateQuiz/CreateQuiz';
 import QuizIntro from '../components/CreateQuiz/QuizIntro/QuizIntro';
 import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/types';
-import axios from 'axios';
-import {useRouter} from 'next/navigation';
-import {useMutation} from '@tanstack/react-query';
+// import axios from 'axios';
+// import {useRouter} from 'next/navigation';
+// import {useMutation} from '@tanstack/react-query';
+import {addQuiz} from '@/actions/actions';
 
 const steps = [
   {
@@ -19,7 +20,7 @@ const steps = [
 ];
 
 function CreateQuizPage() {
-  const router = useRouter();
+  // const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [quiz, setQuiz] = useState<{
@@ -28,6 +29,7 @@ function CreateQuizPage() {
   }>({name: '', description: ''});
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
 
+  /*
   const mutation = useMutation({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: async (data: any) => {
@@ -43,6 +45,7 @@ function CreateQuizPage() {
       alert('Failed to create the quiz. Please try again.');
     },
   });
+  */
 
   const handleIntro = (data: {name: string; description: string}) => {
     const {name, description} = data;
@@ -75,7 +78,8 @@ function CreateQuizPage() {
       updatedAt: new Date(),
     };
     console.log(payload);
-    mutation.mutate(payload);
+    // mutation.mutate(payload);
+    addQuiz(payload);
   };
   return (
     <div>
