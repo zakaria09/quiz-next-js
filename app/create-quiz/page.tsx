@@ -59,7 +59,6 @@ function CreateQuizPage() {
   };
 
   const handleFinish = () => {
-    console.log(questions);
     setLoading(true);
     const payload = {
       ...quiz,
@@ -78,7 +77,6 @@ function CreateQuizPage() {
       },
       updatedAt: new Date(),
     };
-    console.log(payload);
     // mutation.mutate(payload);
     addQuiz(payload);
   };

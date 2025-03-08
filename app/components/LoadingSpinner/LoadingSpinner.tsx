@@ -1,19 +1,13 @@
 import React from 'react';
+import { RotatingLines } from "react-loader-spinner";
 
-type Sizes = 6 | 8 | 12 | 16 | 24 | 32 | 48 | 64 | 96;
-
-export default function LoadingSpinner({
-  size = {height: 12, width: 12},
-}: {
-  size?: {width: Sizes; height: Sizes};
-}) {
+export default function LoadingSpinner() {
   return (
-    <div
-      className={`inline-block h-${size.height} w-${size.width} animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white`}
-    >
-      <span className='!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]'>
-        Loading...
-      </span>
-    </div>
+    <RotatingLines
+      visible={true}
+      animationDuration="0.75"
+      ariaLabel="rotating-lines-loading"
+      strokeColor="#0000FF"
+    />
   );
 }

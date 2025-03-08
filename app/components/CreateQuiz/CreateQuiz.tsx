@@ -27,7 +27,7 @@ function CreateQuiz({
     return (
       <div className='flex justify-center h-72'>
         <div className='self-center'>
-          <LoadingSpinner size={{width: 24, height: 24}} />
+          <LoadingSpinner/>
         </div>
       </div>
     );
