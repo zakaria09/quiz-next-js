@@ -24,7 +24,7 @@ import useQuizStore from '@/store/quizStore';
 
 const formSchema = z.object({
   question: z.string().min(3, 'Please enter a question.'),
-  answers: z
+  choices: z
     .array(
       z.object({
         id: z.string(),
@@ -36,47 +36,40 @@ const formSchema = z.object({
       message: 'Please select at least one correct answer.',
     })
     .refine((value) => value.some((item) => !item.isCorrect), {
-      message: 'all choices cannot be correct'
+      message: 'all choices cannot be correct',
     }),
 });
 
-function MultipleChoiceForm({
-  onMultipleChoiceEmit,
-}: {
-  onMultipleChoiceEmit: (value: MultipleChoiceQuestion) => void;
-}) {
+function MultipleChoiceForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       question: '',
-      answers: defaultChoiceFields,
+      choices: defaultChoiceFields,
     },
     mode: 'onChange',
   });
 
-  const {
-    addQuestion,
-    addChoice,
-  } = useQuizStore();
-  
+  const {questions, addQuestion} = useQuizStore();
+
   const {fields, append, remove, update} = useFieldArray({
     control: form.control,
-    name: 'answers',
+    name: 'choices',
     rules: {required: 'Please add at least one answer.'},
   });
 
-  const watch = useWatch({control: form.control, name: 'answers'});
+  const watch = useWatch({control: form.control, name: 'choices'});
 
   const onSubmit = (data: MultipleChoiceQuestion) => {
-    addQuestion(data.question)
-    addChoice(data.answers)
-    onMultipleChoiceEmit(data);
+    addQuestion(data.question, data.choices);
     form.reset();
   };
 
   const onChecked = ({checked, index}: {checked: boolean; index: number}) => {
     update(index, {...watch[index], isCorrect: checked});
   };
+
+  console.log(questions);
 
   return (
     <div>
@@ -105,7 +98,7 @@ function MultipleChoiceForm({
                   <FormField
                     control={form.control}
                     key={choiceField.id}
-                    name={`answers.${index}.choice`}
+                    name={`choices.${index}.choice`}
                     render={({field}) => (
                       <FormItem>
                         <FormLabel>Choice {alphabet[index]}</FormLabel>
@@ -128,7 +121,7 @@ function MultipleChoiceForm({
                                 <FormField
                                   control={form.control}
                                   key={index}
-                                  name={`answers.${index}.isCorrect`}
+                                  name={`choices.${index}.isCorrect`}
                                   render={({field}) => (
                                     <FormItem>
                                       <FormControl>
@@ -145,7 +138,7 @@ function MultipleChoiceForm({
                                       <FormLabel
                                         className={classNames({
                                           'text-red-600': Boolean(
-                                            form.formState.errors?.answers?.root
+                                            form.formState.errors?.choices?.root
                                           ),
                                         })}
                                       >
@@ -159,9 +152,9 @@ function MultipleChoiceForm({
                           </div>
                         </FormControl>
                         <FormMessage></FormMessage>
-                        {form.formState.errors?.answers?.root && (
+                        {form.formState.errors?.choices?.root && (
                           <p className='text-sm text-red-600'>
-                            {form.formState.errors?.answers?.root.message}
+                            {form.formState.errors?.choices?.root.message}
                           </p>
                         )}
                       </FormItem>

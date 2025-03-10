@@ -2,32 +2,27 @@
 import React from 'react';
 import MultipleChoiceForm from './MultipleChoiceForm/MultipleChoiceForm';
 import QuestionList from './QuestionList/QuestionList';
-import {MultipleChoiceQuestion} from './shared/types/types';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import useQuizStore from '@/store/quizStore';
 
 function CreateQuiz({
-  questions,
-  setQuestions,
   onFinish,
   isLoading,
 }: {
-  questions: MultipleChoiceQuestion[];
-  setQuestions: (value: MultipleChoiceQuestion[]) => void;
-  onFinish: (questions: MultipleChoiceQuestion[]) => void;
+  onFinish: () => void;
   isLoading: boolean;
 }) {
-  const handleQuestionAdded = (value: MultipleChoiceQuestion) => {
-    setQuestions([...questions, value]);
-  };
+  const {questions} = useQuizStore();
+
   const handleFinish = () => {
-    onFinish(questions);
+    onFinish();
   };
 
   if (isLoading) {
     return (
       <div className='flex justify-center h-72'>
         <div className='self-center'>
-          <LoadingSpinner/>
+          <LoadingSpinner />
         </div>
       </div>
     );
@@ -35,9 +30,9 @@ function CreateQuiz({
 
   return (
     <div>
-      <MultipleChoiceForm onMultipleChoiceEmit={handleQuestionAdded} />
+      <MultipleChoiceForm />
       {questions.length > 0 && (
-        <QuestionList questions={questions}>
+        <QuestionList>
           <div className='flex justify-end pt-6'>
             <button
               type='button'

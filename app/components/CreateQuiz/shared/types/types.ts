@@ -9,5 +9,5 @@ export interface MultipleChoiceQuestion {
   id?: number;
   question: string;
   quizId?: number;
-  answers: choiceAnswers[];
+  choices: choiceAnswers[];
 }

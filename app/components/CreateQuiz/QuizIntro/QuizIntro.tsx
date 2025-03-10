@@ -20,7 +20,7 @@ const formSchema = z.object({
   description: z.string().min(3, 'Please enter a description.'),
 });
 
-function QuizIntro() {
+function QuizIntro({next}: {next: () => void}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,16 +29,13 @@ function QuizIntro() {
     },
   });
 
-    const {
-      setName,
-      setDescription
-    } = useQuizStore();
+  const {setName, setDescription} = useQuizStore();
 
-
-  const onSubmit = (data: { name: string; description: string; }) => {
-    const { name, description } = data;
+  const onSubmit = (data: {name: string; description: string}) => {
+    const {name, description} = data;
     setName(name);
     setDescription(description);
+    next();
   };
 
   return (

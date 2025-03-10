@@ -2,10 +2,6 @@
 import {useState} from 'react';
 import CreateQuiz from '../components/CreateQuiz/CreateQuiz';
 import QuizIntro from '../components/CreateQuiz/QuizIntro/QuizIntro';
-import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/types';
-// import axios from 'axios';
-// import {useRouter} from 'next/navigation';
-// import {useMutation} from '@tanstack/react-query';
 import {addQuiz} from '@/actions/actions';
 import Stepper from '@/app/components/Stepper/Stepper';
 import useQuizStore from '@/store/quizStore';
@@ -22,17 +18,11 @@ const steps = [
 ];
 
 function CreateQuizPage() {
-  // const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [quiz, setQuiz] = useState<{
-    name: string;
-    description: string;
-  }>({name: '', description: ''});
-  const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
-  const { name, description } = useQuizStore();
+  const {name, description, questions} = useQuizStore();
 
-  console.log('store', name, description)
+  console.log('store', name, description);
 
   /*
   const mutation = useMutation({
@@ -52,26 +42,21 @@ function CreateQuizPage() {
   });
   */
 
-  const handleIntro = (data: {name: string; description: string}) => {
-    const {name, description} = data;
-    setQuiz((prev) => ({
-      ...prev,
-      name,
-      description,
-    }));
+  const handleIntro = () => {
     setCurrentStep((currentStep) => currentStep + 1);
   };
 
   const handleFinish = () => {
     setLoading(true);
     const payload = {
-      ...quiz,
+      name,
+      description,
       questions: {
         create: questions.map((question) => {
           return {
             question: question.question,
             answers: {
-              create: question.answers.map((answer) => ({
+              create: question.choices.map((answer) => ({
                 choice: answer.choice,
                 isCorrect: answer.isCorrect,
               })),
@@ -85,19 +70,13 @@ function CreateQuizPage() {
     addQuiz(payload);
   };
   return (
-    <div className="mt-8">
+    <div className='mt-8'>
       <Stepper
         steps={steps}
         currentStep={currentStep}
         components={[
-          <QuizIntro key={1} />,
-          <CreateQuiz
-            key={2}
-            questions={questions}
-            setQuestions={setQuestions}
-            onFinish={handleFinish}
-            isLoading={loading}
-          />,
+          <QuizIntro key={1} next={handleIntro} />,
+          <CreateQuiz key={2} onFinish={handleFinish} isLoading={loading} />,
         ]}
       />
     </div>

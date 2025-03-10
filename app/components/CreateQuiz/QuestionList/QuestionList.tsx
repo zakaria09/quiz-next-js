@@ -8,17 +8,13 @@ import {
 } from '@/components/ui/accordion';
 import {Card} from '@/components/ui/card';
 import {SiTicktick} from 'react-icons/si';
-import {MultipleChoiceQuestion} from '../shared/types/types';
 import {alphabet} from '../shared/constants/constants';
+import useQuizStore from '@/store/quizStore';
 
-function QuestionList({
-  questions,
-  children,
-}: {
-  questions: MultipleChoiceQuestion[];
-  children?: React.ReactNode;
-}) {
-  console.log(questions);
+function QuestionList({children}: {children?: React.ReactNode}) {
+  const {questions} = useQuizStore();
+
+  console.log('questions', questions);
   return (
     <div>
       <Card className=' px-6 py-8'>
@@ -34,8 +30,8 @@ function QuestionList({
                 </p>
               </AccordionTrigger>
               <AccordionContent>
-                {question.answers.map((answer, ind) => (
-                  <div key={answer.id}>
+                {question.choices.map((choice, ind) => (
+                  <div key={choice.id}>
                     <div className='font-medium mb-1 flex gap-4 items-center'>
                       <div className='flex items-center gap-1'>
                         <p>
@@ -43,10 +39,10 @@ function QuestionList({
                           {') '}
                         </p>
                         <span className='font-semibold text-lg'>
-                          {answer.choice}
+                          {choice.choice}
                         </span>
                       </div>
-                      {answer.isCorrect && (
+                      {choice.isCorrect && (
                         <SiTicktick className='text-green-500' />
                       )}
                     </div>
