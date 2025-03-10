@@ -50,7 +50,7 @@ function MultipleChoiceForm() {
     mode: 'onChange',
   });
 
-  const {questions, addQuestion} = useQuizStore();
+  const {addQuestion} = useQuizStore();
 
   const {fields, append, remove, update} = useFieldArray({
     control: form.control,
@@ -68,8 +68,6 @@ function MultipleChoiceForm() {
   const onChecked = ({checked, index}: {checked: boolean; index: number}) => {
     update(index, {...watch[index], isCorrect: checked});
   };
-
-  console.log(questions);
 
   return (
     <div>

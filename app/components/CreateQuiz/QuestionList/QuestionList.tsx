@@ -14,7 +14,6 @@ import useQuizStore from '@/store/quizStore';
 function QuestionList({children}: {children?: React.ReactNode}) {
   const {questions} = useQuizStore();
 
-  console.log('questions', questions);
   return (
     <div>
       <Card className=' px-6 py-8'>
