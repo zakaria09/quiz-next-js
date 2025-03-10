@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
 import {Checkbox} from '@/components/ui/checkbox';
 import {
@@ -20,6 +20,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import classNames from 'classnames';
 import {MultipleChoiceQuestion} from '../shared/types/types';
 import {alphabet, defaultChoiceFields} from '../shared/constants/constants';
+import useQuizStore from '@/store/quizStore';
 
 const formSchema = z.object({
   question: z.string().min(3, 'Please enter a question.'),
@@ -33,6 +34,9 @@ const formSchema = z.object({
     )
     .refine((value) => value.some((item) => item.isCorrect), {
       message: 'Please select at least one correct answer.',
+    })
+    .refine((value) => value.some((item) => !item.isCorrect), {
+      message: 'all choices cannot be correct'
     }),
 });
 
@@ -50,6 +54,16 @@ function MultipleChoiceForm({
     mode: 'onChange',
   });
 
+  const {
+    addQuestion,
+    addChoice,
+  } = useQuizStore();
+
+  useEffect(() => {
+
+    console.log(form.getValues())
+  }, [form.getValues().answers, form.getValues().question]);
+  
   const {fields, append, remove, update} = useFieldArray({
     control: form.control,
     name: 'answers',

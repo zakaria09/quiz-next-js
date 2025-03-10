@@ -8,6 +8,7 @@ import {MultipleChoiceQuestion} from '../components/CreateQuiz/shared/types/type
 // import {useMutation} from '@tanstack/react-query';
 import {addQuiz} from '@/actions/actions';
 import Stepper from '@/app/components/Stepper/Stepper';
+import useQuizStore from '@/store/quizStore';
 
 const steps = [
   {
@@ -29,6 +30,9 @@ function CreateQuizPage() {
     description: string;
   }>({name: '', description: ''});
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
+  const { name, description } = useQuizStore();
+
+  console.log('store', name, description)
 
   /*
   const mutation = useMutation({
@@ -86,7 +90,7 @@ function CreateQuizPage() {
         steps={steps}
         currentStep={currentStep}
         components={[
-          <QuizIntro key={1} onCompleteEmit={handleIntro} />,
+          <QuizIntro key={1} />,
           <CreateQuiz
             key={2}
             questions={questions}

@@ -33,7 +33,7 @@ export default function NavBar() {
         ref={menuRef}
         className='sticky top-0 shadow-sm z-50 bg-white border-b-4 border-gray-200 border-solid'
       >
-        <div className='flex justify-around mx-auto py-10 px-10 md:px-20 relative'>
+        <div className='flex justify-around mx-auto py-10 relative'>
           <Link
             href={'/'}
             className='text-xl my-auto bg-gradient-to-t from-slate-600 to-slate-900 bg-clip-text text-transparent'

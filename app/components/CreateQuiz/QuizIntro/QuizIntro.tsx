@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/form';
 import {Input} from '@/components/ui/input';
 import {Textarea} from '@/components/ui/textarea';
+import useQuizStore from '@/store/quizStore';
 import {zodResolver} from '@hookform/resolvers/zod';
 import React from 'react';
 import {useForm} from 'react-hook-form';
@@ -19,16 +20,7 @@ const formSchema = z.object({
   description: z.string().min(3, 'Please enter a description.'),
 });
 
-interface QuizDescription {
-  name: string;
-  description: string;
-}
-
-function QuizIntro({
-  onCompleteEmit,
-}: {
-  onCompleteEmit: (value: QuizDescription) => void;
-}) {
+function QuizIntro() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,9 +29,16 @@ function QuizIntro({
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = (data: any) => {
-    onCompleteEmit(data);
+    const {
+      setName,
+      setDescription
+    } = useQuizStore();
+
+
+  const onSubmit = (data: { name: string; description: string; }) => {
+    const { name, description } = data;
+    setName(name);
+    setDescription(description);
   };
 
   return (
