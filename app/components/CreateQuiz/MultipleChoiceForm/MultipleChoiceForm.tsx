@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
 import {Checkbox} from '@/components/ui/checkbox';
 import {
@@ -58,11 +58,6 @@ function MultipleChoiceForm({
     addQuestion,
     addChoice,
   } = useQuizStore();
-
-  useEffect(() => {
-
-    console.log(form.getValues())
-  }, [form.getValues().answers, form.getValues().question]);
   
   const {fields, append, remove, update} = useFieldArray({
     control: form.control,
@@ -73,6 +68,8 @@ function MultipleChoiceForm({
   const watch = useWatch({control: form.control, name: 'answers'});
 
   const onSubmit = (data: MultipleChoiceQuestion) => {
+    addQuestion(data.question)
+    addChoice(data.answers)
     onMultipleChoiceEmit(data);
     form.reset();
   };
