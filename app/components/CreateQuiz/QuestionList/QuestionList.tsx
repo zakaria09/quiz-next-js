@@ -9,11 +9,15 @@ import {
 import {Card} from '@/components/ui/card';
 import {SiTicktick} from 'react-icons/si';
 import {alphabet} from '../shared/constants/constants';
-import useQuizStore from '@/store/quizStore';
+import {MultipleChoiceQuestion} from '../shared/types/types';
 
-function QuestionList({children}: {children?: React.ReactNode}) {
-  const {questions} = useQuizStore();
-
+function QuestionList({
+  questions,
+  children,
+}: {
+  questions: MultipleChoiceQuestion[];
+  children?: React.ReactNode;
+}) {
   return (
     <div>
       <Card className=' px-6 py-8'>

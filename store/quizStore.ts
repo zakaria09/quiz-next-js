@@ -4,11 +4,11 @@ interface Choice {
   id: string | number;
   choice: string;
   isCorrect: boolean;
-  choiceId?: number;
+  questionId?: number;
 }
 
 interface Question {
-  id: string;
+  id?: number;
   question: string;
   choices: Choice[];
 }
@@ -19,6 +19,7 @@ interface QuizState {
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   addQuestion: (question: string, choices: Choice[]) => void;
+  reset: () => void;
 }
 
 const useQuizStore = create<QuizState>((set) => ({
@@ -33,9 +34,11 @@ const useQuizStore = create<QuizState>((set) => ({
     set((state) => ({
       questions: [
         ...state.questions,
-        {id: crypto.randomUUID(), question, choices: choices},
+        {id: new Date().getTime(), question, choices: choices},
       ],
     })),
+
+  reset: () => set(() => ({name: '', description: '', questions: []})),
 }));
 
 export default useQuizStore;

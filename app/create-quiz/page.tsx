@@ -20,9 +20,7 @@ const steps = [
 function CreateQuizPage() {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const {name, description, questions} = useQuizStore();
-
-  console.log('store', name, description);
+  const {name, description, questions, reset} = useQuizStore();
 
   /*
   const mutation = useMutation({
@@ -48,6 +46,7 @@ function CreateQuizPage() {
 
   const handleFinish = () => {
     setLoading(true);
+    console.log('questions', questions);
     const payload = {
       name,
       description,
@@ -55,7 +54,7 @@ function CreateQuizPage() {
         create: questions.map((question) => {
           return {
             question: question.question,
-            answers: {
+            choices: {
               create: question.choices.map((answer) => ({
                 choice: answer.choice,
                 isCorrect: answer.isCorrect,
@@ -67,7 +66,9 @@ function CreateQuizPage() {
       updatedAt: new Date(),
     };
     // mutation.mutate(payload);
+    console.log(payload);
     addQuiz(payload);
+    reset();
   };
   return (
     <div className='mt-8'>

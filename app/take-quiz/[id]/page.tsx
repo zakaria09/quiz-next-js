@@ -16,21 +16,21 @@ export default async function TakeQuizPage({
     include: {
       questions: {
         include: {
-          answers: true,
+          choices: true,
         },
       },
     },
   });
 
   const questionsFormated = quiz?.questions.map((question) => {
-    const numOfCorrectAnswers = question.answers.filter(
+    const numOfCorrectAnswers = question.choices.filter(
       (choice) => choice.isCorrect
     ).length;
-    const removeIsCorrect = question.answers.map((answer) => ({
-      id: answer.id,
-      choice: answer.choice,
-      choiceId: answer.choiceId,
-      isCorrect: answer.isCorrect,
+    const removeIsCorrect = question.choices.map((choice) => ({
+      id: choice.id,
+      choice: choice.choice,
+      choiceId: choice.questionId,
+      isCorrect: choice.isCorrect,
     }));
     return {...question, answers: removeIsCorrect, numOfCorrectAnswers};
   });

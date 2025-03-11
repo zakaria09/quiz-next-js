@@ -1,8 +1,9 @@
 import {prisma} from '@/lib/prisma';
-import {revalidatePath} from 'next/cache';
+// import {revalidatePath} from 'next/cache';
 import {NextResponse} from 'next/server';
 export const dynamic = 'force-dynamic';
 
+/*
 export async function POST(req: Request) {
   const body = await req.json();
 
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
     );
   }
 }
+*/
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -40,21 +42,21 @@ export async function GET(request: Request) {
       include: {
         questions: {
           include: {
-            answers: true,
+            choices: true,
           },
         },
       },
     });
 
     const questionsFormated = quiz?.questions.map((question) => {
-      const numOfCorrectAnswers = question.answers.filter(
+      const numOfCorrectAnswers = question.choices.filter(
         (choice) => choice.isCorrect
       ).length;
-      const removeIsCorrect = question.answers.map((answer) => ({
-        id: answer.id,
-        choice: answer.choice,
-        choiceId: answer.choiceId,
-        isCorrect: answer.isCorrect,
+      const removeIsCorrect = question.choices.map((choice) => ({
+        id: choice.id,
+        choice: choice.choice,
+        choiceId: choice.questionId,
+        isCorrect: choice.isCorrect,
       }));
       return {...question, answers: removeIsCorrect, numOfCorrectAnswers};
     });
@@ -95,8 +97,8 @@ export async function DELETE(request: Request) {
     console.log(questionIds);
 
     // Step 3: Delete all answers linked to those questions
-    await prisma.answer.deleteMany({
-      where: {choiceId: {in: questionIds}}, // Delete answers linked to questions
+    await prisma.choice.deleteMany({
+      where: {questionId: {in: questionIds}}, // Delete answers linked to questions
     });
 
     // Delete all questions and answers associated with the quiz

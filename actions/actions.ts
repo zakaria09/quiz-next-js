@@ -14,6 +14,13 @@ export async function addQuiz(payload: any) {
     data: {
       ...payload,
     },
+    include: {
+      questions: {
+        include: {
+          choices: true, // Include choices here as well
+        },
+      },
+    },
   });
   revalidatePath('/quiz-dashboard', 'page');
   redirect('/quiz-dashboard');

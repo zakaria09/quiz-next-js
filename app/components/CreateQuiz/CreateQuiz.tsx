@@ -32,7 +32,7 @@ function CreateQuiz({
     <div>
       <MultipleChoiceForm />
       {questions.length > 0 && (
-        <QuestionList>
+        <QuestionList questions={questions}>
           <div className='flex justify-end pt-6'>
             <button
               type='button'

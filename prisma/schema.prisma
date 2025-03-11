@@ -28,13 +28,13 @@ model Question {
   question String
   quiz     Quiz     @relation(fields: [quizId], references: [id])
   quizId   Int // Foreign key for one-to-many relationship with Quiz
-  answers  Answer[] // One-to-Many relationship with Choice
+  choices  Choice[] // One-to-Many relationship with Choice
 }
 
-model Answer {
-  id        Int      @id @default(autoincrement())
-  choice    String
-  question  Question @relation(fields: [choiceId], references: [id])
-  choiceId  Int
-  isCorrect Boolean
+model Choice {
+  id         String   @id @default(uuid())
+  choice     String
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId Int
+  isCorrect  Boolean
 }

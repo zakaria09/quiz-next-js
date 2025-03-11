@@ -14,9 +14,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const answers = await prisma.answer.findMany({
+    const answers = await prisma.choice.findMany({
       where: {
-        choiceId: {
+        questionId: {
           in: quizIds, // Ensure `quizIds` is an array of IDs
         },
       },
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
       include: {
         questions: {
           include: {
-            answers: true,
+            choices: true,
           },
         },
       },

@@ -26,9 +26,13 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
       quizId: id,
     },
     include: {
-      answers: true,
+      choices: true,
     },
   });
+  /**
+   * TODO: Database migration to chnage the schema from answers to choices
+   * @see https://www.prisma.io/docs/concepts/components/prisma-migrate
+   */
   return (
     <div className='py-8'>
       <Card>

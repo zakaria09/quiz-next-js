@@ -2,7 +2,7 @@ export interface choiceAnswers {
   id: string | number;
   choice: string;
   isCorrect: boolean;
-  choiceId?: number;
+  questionId?: number;
 }
 
 export interface MultipleChoiceQuestion {
