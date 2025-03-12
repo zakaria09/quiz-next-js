@@ -17,7 +17,7 @@ datasource db {
 model Quiz {
   id          Int        @id @default(autoincrement())
   name        String
-  description String?
+  description String
   questions   Question[] // One-to-Many relationship with Question
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

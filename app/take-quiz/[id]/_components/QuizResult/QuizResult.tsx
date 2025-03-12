@@ -1,13 +1,13 @@
 'use client';
 import {Answer, Quiz} from '@/app/types/quiz';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
-import {useQuizStore} from '@/util/quiz-store-provider';
 import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {Doughnut} from 'react-chartjs-2';
 import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js';
 import ShowAnswer from '../ShowAnswer/ShowAnswer';
+import useQuizStore from '@/store/quizStore';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 interface SelectedChoices {
@@ -35,7 +35,7 @@ function QuizResult({quizId}: {quizId: number}) {
       const choices: SelectedChoices[] = [];
       data?.questions.reduce((acc, questions) => {
         const filteredChoices = selectedChoices.filter(
-          (choice) => choice.choiceId === questions.id
+          (choice) => choice.questionId === questions.id
         );
         choices.push({
           id: questions.id,
@@ -92,7 +92,9 @@ function QuizResult({quizId}: {quizId: number}) {
       <Card>
         <CardHeader>
           <h1 className='text-2xl font-bold'>{data?.name}</h1>
-          <h2 className='text-lg text-gray-600'>{data?.description}</h2>
+          <h2 className='text-lg text-gray-600'>
+            {data ? data.description : 'Name not found.'}
+          </h2>
           <span className='flex gap-2'>
             <h1 className='text-2xl font-extrabold'>
               {(correct / choices.length) * 100}%

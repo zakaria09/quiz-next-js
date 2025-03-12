@@ -1,9 +1,9 @@
 export interface Quiz {
-  id: number;
-  name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
+  id?: number;
+  name?: string;
+  description?: string;
+  createdAt?: Date | undefined;
+  updatedAt?: Date | undefined;
   questions: Question[];
 }
 
@@ -16,8 +16,8 @@ interface Question {
 }
 
 export interface Answer {
-  id: number;
+  id: string;
   choice: string;
-  choiceId: number;
+  questionId: number;
   isCorrect: boolean;
 }

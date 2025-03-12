@@ -29,14 +29,11 @@ export default async function TakeQuizPage({
     const removeIsCorrect = question.choices.map((choice) => ({
       id: choice.id,
       choice: choice.choice,
-      choiceId: choice.questionId,
+      questionId: choice.questionId,
       isCorrect: choice.isCorrect,
     }));
     return {...question, answers: removeIsCorrect, numOfCorrectAnswers};
   });
   if (!questionsFormated) return null;
-  return (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <MultipleChoice quiz={{...quiz, questions: questionsFormated} as any} />
-  );
+  return <MultipleChoice quiz={{...quiz, questions: questionsFormated}} />;
 }

@@ -11,20 +11,20 @@ import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import MoonLoader from 'react-spinners/MoonLoader';
 import ShowAnswer from './ShowAnswer/ShowAnswer';
-import {useQuizStore} from '@/util/quiz-store-provider';
 import QuizResult from './QuizResult/QuizResult';
 import {Quiz} from '@/app/types/quiz';
 import {choiceAnswers} from '@/app/components/CreateQuiz/shared/types/types';
 import ChoiceOptions from '@/app/components/ChoiceOptions/ChoiceOptions';
+import useQuizStore from '@/store/quizStore';
 export interface Choices {
-  id: number;
+  id: string;
   choice: string;
-  choiceId: number;
+  questionId: number;
   isCorrect: boolean;
 }
 
 export interface MultipleChoice {
-  id?: number;
+  id: number;
   question: string;
   quizId?: number;
   answers: Choices[];
@@ -47,7 +47,7 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
     queryFn: async () =>
       (
         await axios.post(`/api/answers`, {
-          quizIds: selectedAnswers?.map((answer) => answer.choiceId),
+          quizIds: selectedAnswers?.map((answer) => answer.questionId),
         })
       )?.data,
     enabled: false,
