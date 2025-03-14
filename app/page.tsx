@@ -1,6 +1,8 @@
+import {getUserSession} from '@/lib/session';
 import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+  const user = await getUserSession();
   return (
     <div>
       <div className='min-h-[calc(100vh-124px)] flex justify-center items-center text-slate-900 '>
@@ -14,7 +16,9 @@ export default function Home() {
                 Quiz Portal makes it simple for teachers and employers to
                 administer, create, and manage quizzes, streamlining assessments
                 and tracking results with ease.
+                {user ? JSON.stringify(user) : null}
               </p>
+              <p></p>
             </div>
             <div className='flex justify-center'>
               <div className='flex flex-col lg:flex-row items-start px-6 lg:gap-6 gap-4 lg:py-6 '>

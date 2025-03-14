@@ -5,8 +5,10 @@ import {RxHamburgerMenu} from 'react-icons/rx';
 import classNames from 'classnames';
 import {IoCloseSharp} from 'react-icons/io5';
 import './NavBar.css';
+import {signOut, useSession} from 'next-auth/react';
 
 export default function NavBar() {
+  const {data: session} = useSession();
   const [navOpen, setNavOpen] = useState<boolean>(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -25,6 +27,11 @@ export default function NavBar() {
 
   const handleToggleNav = () => {
     setNavOpen(!navOpen);
+  };
+
+  const signOutHandle = () => {
+    handleToggleNav();
+    signOut();
   };
 
   return (
@@ -76,23 +83,32 @@ export default function NavBar() {
                 Contact
               </Link>
             </li>
-            <li>
-              <div className='flex gap-4'>
-                <Link
-                  className='btn-primary'
-                  href={'/book-call'}
-                  onClick={handleToggleNav}
+            <li className='flex gap-4'>
+              {!session ? (
+                <>
+                  <Link
+                    className='btn-primary'
+                    href={'/signin'}
+                    onClick={handleToggleNav}
+                  >
+                    <button>Login</button>
+                  </Link>
+                  <Link
+                    className='btn-outline primary'
+                    href={'/signup'}
+                    onClick={handleToggleNav}
+                  >
+                    <button>Sign Up</button>
+                  </Link>
+                </>
+              ) : (
+                <button
+                  className='btn-outline primary cursor-pointer'
+                  onClick={signOutHandle}
                 >
-                  <button>Login</button>
-                </Link>
-                <Link
-                  className='btn-outline primary'
-                  href={'/our-process'}
-                  onClick={handleToggleNav}
-                >
-                  <button>Sign Up</button>
-                </Link>
-              </div>
+                  Sign Out
+                </button>
+              )}
             </li>
           </ul>
         </div>
