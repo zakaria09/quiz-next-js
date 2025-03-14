@@ -1,15 +1,18 @@
 import {NextResponse} from 'next/server';
-import {getSession} from 'next-auth/react';
+import {getToken} from 'next-auth/jwt';
 
 export async function middleware(req) {
-  const session = await getSession({req});
-
   // Restrict access to /dashboard and /admin unless the user is logged in
   const url = req.url;
+  const token = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
 
-  if ((url.includes('/quiz-dashboard') || url.includes('/admin')) && !session) {
+  console.log('token', token);
+
+  if (url.includes('/quiz-dashboard')) {
     // Redirect user to login page if not authenticated
-    return NextResponse.redirect(new URL('/signin', req.url));
+    if (!token) {
+      return NextResponse.redirect(new URL('/signin', url));
+    }
   }
 
   // Allow access if authenticated
@@ -17,5 +20,15 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/quiz-dashboard/:path*', '/admin/:path*'], // Apply middleware to these routes
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     */
+    '/quiz-dashboard/:path*',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+  ],
 };

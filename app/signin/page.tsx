@@ -7,7 +7,7 @@ const SignInPage = () => {
   const router = useRouter();
   const handleSignIn = async () => {
     await signIn('google');
-    router.push('/quiz-dashboard');
+    router.push('/'); // Redirect to the home page after signing in
   };
   return (
     <div className='flex justify-center bg-gray-100'>

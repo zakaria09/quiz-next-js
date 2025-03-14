@@ -1,7 +1,7 @@
 'use client';
 import {useState} from 'react';
-import CreateQuiz from '../components/CreateQuiz/CreateQuiz';
-import QuizIntro from '../components/CreateQuiz/QuizIntro/QuizIntro';
+import CreateQuiz from '@/app/components/CreateQuiz/CreateQuiz';
+import QuizIntro from '@/app/components/CreateQuiz/QuizIntro/QuizIntro';
 import {addQuiz} from '@/actions/actions';
 import Stepper from '@/app/components/Stepper/Stepper';
 import useQuizStore from '@/store/quizStore';

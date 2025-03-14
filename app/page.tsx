@@ -22,7 +22,10 @@ export default async function Home() {
             </div>
             <div className='flex justify-center'>
               <div className='flex flex-col lg:flex-row items-start px-6 lg:gap-6 gap-4 lg:py-6 '>
-                <Link className='btn-primary-lg' href={'/create-quiz'}>
+                <Link
+                  className='btn-primary-lg'
+                  href={'/quiz-dashboard/create-quiz'}
+                >
                   Create a Quiz
                 </Link>
               </div>
