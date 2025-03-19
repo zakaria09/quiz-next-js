@@ -16,11 +16,13 @@ interface QuizState {
   name: string;
   description: string;
   questions: Question[];
+  quizResultId: number | null;
   selectedChoices: Choice[];
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   setselectedChoices: (selectedChoices: Choice[]) => void;
   addQuestion: (question: string, choices: Choice[]) => void;
+  setQuizResultId: (quizResultId: number) => void;
   reset: () => void;
 }
 
@@ -29,9 +31,11 @@ const useQuizStore = create<QuizState>((set) => ({
   description: '',
   questions: [],
   selectedChoices: [],
+  quizResultId: null,
 
   setName: (name) => set(() => ({name})),
   setDescription: (description) => set(() => ({description})),
+  setQuizResultId: (quizResultId: number) => set(() => ({quizResultId})),
 
   addQuestion: (question, choices) =>
     set((state) => ({

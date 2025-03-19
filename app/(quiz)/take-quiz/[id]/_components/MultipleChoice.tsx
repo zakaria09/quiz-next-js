@@ -6,16 +6,18 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import React, {useState} from 'react';
-import {useQuery} from '@tanstack/react-query';
+import React, {useEffect, useState} from 'react';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import MoonLoader from 'react-spinners/MoonLoader';
-import ShowAnswer from './ShowAnswer/ShowAnswer';
-import QuizResult from './QuizResult/QuizResult';
+import ShowAnswer from '../../../../components/ShowAnswer/ShowAnswer';
 import {Quiz} from '@/app/types/quiz';
 import {choiceAnswers} from '@/app/components/CreateQuiz/shared/types/types';
 import ChoiceOptions from '@/app/components/ChoiceOptions/ChoiceOptions';
 import useQuizStore from '@/store/quizStore';
+import {redirect, usePathname, useRouter} from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
+
 export interface Choices {
   id: string;
   choice: string;
@@ -31,32 +33,65 @@ export interface MultipleChoice {
   numOfCorrectAnswers: number;
 }
 
+type ApiResponse = {
+  answers: Choices[];
+  status: number;
+};
+
+type CurrentQuestionApi = {
+  selectedChoices: null | Choices[];
+};
+
 function MultipleChoice({quiz}: {quiz: Quiz}) {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const searchParams = useSearchParams();
+  const {replace} = useRouter();
+  const pathname = usePathname();
+  const params = new URLSearchParams(searchParams);
+  const quizResultId = searchParams.get('quizResultId');
+  const currentQuestionIndex = searchParams.get('question');
+  const currentIndex = Number(currentQuestionIndex || '0');
+  // const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Choices[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  console.log(quiz);
 
-  const selectedChoices = useQuizStore((store) => store.selectedChoices);
   const setSelectedChoices = useQuizStore((store) => store.setselectedChoices);
 
-  console.log('selectedChoices state', selectedChoices);
+  /***
+   * See if teh user has already answered a quiz question
+   * ***/
+  const {data: currentQuestion, isLoading: loadingCurrentQuestion} =
+    useQuery<CurrentQuestionApi>({
+      queryKey: ['currentQuestionIndex', currentQuestionIndex],
+      queryFn: async () =>
+        (
+          await axios.get(
+            `/api/current-question?quizResultId=${quizResultId}&questionId=${quiz.questions[currentIndex].id}`
+          )
+        )?.data,
+      enabled: !!quizResultId, // Only run if quizResultId is available
+      refetchOnWindowFocus: false, // Disable refetch on window focus
+      retry: 3,
+    });
 
-  const {data, refetch, isLoading} = useQuery({
-    queryKey: ['answers', currentIndex],
-    queryFn: async () =>
-      (
-        await axios.post(`/api/answers`, {
-          quizIds: selectedAnswers?.map((answer) => answer.questionId),
-        })
-      )?.data,
-    enabled: false,
+  useEffect(() => {
+    setSelectedAnswers(currentQuestion?.selectedChoices || []);
+    setIsSubmitted(!!currentQuestion?.selectedChoices ? true : false);
+  }, [currentQuestion, loadingCurrentQuestion]);
+
+  const mutation = useMutation<ApiResponse>({
+    mutationFn: async () =>
+      axios.post(`/api/answers`, {
+        questionId: quiz.questions[currentIndex].id,
+        selectedChoice: selectedAnswers.map((choice) => choice.id),
+        quizResultId,
+      }),
   });
 
   if (currentIndex === quiz.questions.length)
-    return <QuizResult quizId={Number(quiz.id)} />;
+    redirect(`/quiz-result/${quiz.id}`);
 
   const {question, answers, numOfCorrectAnswers} = quiz.questions[currentIndex];
+
   const handleSelectedChoice = (choice: Choices) => {
     if (numOfCorrectAnswers === 1) {
       setSelectedAnswers([choice]);
@@ -81,16 +116,16 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
   const handleSubmit = () => {
     if (!isSubmitted) {
       setIsSubmitted(true);
-      refetch();
+      mutation.mutate();
     } else {
-      setCurrentIndex((prev) => prev + 1);
+      // setCurrentIndex((prev) => prev + 1);
+      params.set('question', String(currentIndex + 1));
+      replace(`${pathname}?${params.toString()}`);
       setSelectedChoices(selectedAnswers);
       setSelectedAnswers([]);
       setIsSubmitted(false);
     }
   };
-
-  console.log(currentIndex);
 
   return (
     <div className='pt-8'>
@@ -115,7 +150,7 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
                     onSelectedChoice={handleSelectedChoice}
                   />
                 ))
-              : data?.answers.map((answer: choiceAnswers, index: number) => (
+              : answers.map((answer: choiceAnswers, index: number) => (
                   <ShowAnswer
                     key={answer.id}
                     answers={answer}
@@ -128,7 +163,7 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
         <CardFooter>
           {selectedAnswers && (
             <div className='flex justify-start'>
-              {!isLoading ? (
+              {!mutation.isPending ? (
                 <button className='btn-primary' onClick={handleSubmit}>
                   {isSubmitted ? 'Next' : 'Submit'}
                 </button>

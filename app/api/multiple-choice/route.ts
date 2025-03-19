@@ -3,28 +3,6 @@ import {prisma} from '@/lib/prisma';
 import {NextResponse} from 'next/server';
 export const dynamic = 'force-dynamic';
 
-/*
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  try {
-    await prisma.quiz.create({
-      data: {
-        ...body,
-      },
-    });
-    revalidatePath('/quiz-dashboard', 'page');
-    return Response.json({message: 'ok', status: 200});
-  } catch (error) {
-    console.log(error);
-    return Response.json(
-      {error, message: 'Failed to create quiz'},
-      {status: 500}
-    );
-  }
-}
-*/
-
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const quizId = url.searchParams.get('quizId');
@@ -86,29 +64,6 @@ export async function DELETE(request: Request) {
   console.log(Number(quizId));
 
   try {
-    // Step 1: Find all questions associated with the quiz
-    const questions = await prisma.question.findMany({
-      where: {quizId: Number(quizId)},
-      select: {id: true}, // Only fetch question IDs
-    });
-
-    // Step 2: Extract question IDs
-    const questionIds = questions.map((q) => q.id);
-    console.log(questionIds);
-
-    // Step 3: Delete all answers linked to those questions
-    await prisma.choice.deleteMany({
-      where: {questionId: {in: questionIds}}, // Delete answers linked to questions
-    });
-
-    // Delete all questions and answers associated with the quiz
-    await prisma.question.deleteMany({
-      where: {
-        quizId: Number(quizId),
-      },
-    });
-
-    // Finally delete the quiz
     await prisma.quiz.delete({
       where: {
         id: Number(quizId),

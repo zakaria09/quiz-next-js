@@ -1,11 +1,15 @@
 import {prisma} from '@/lib/prisma';
+import {getUserSession} from '@/lib/session';
 import {NextResponse} from 'next/server';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  const session = await getUserSession();
+  console.log('session', session?.id);
   try {
-    const {quizIds} = await request.json();
+    const {questionId, quizResultId, selectedChoice} = await request.json();
 
-    if (!quizIds || !Array.isArray(quizIds) || quizIds.length === 0) {
+    if (!questionId) {
       return new NextResponse(
         JSON.stringify({message: 'Quiz ID is required'}),
         {
@@ -16,9 +20,38 @@ export async function POST(request: Request) {
 
     const answers = await prisma.choice.findMany({
       where: {
-        questionId: {
-          in: quizIds, // Ensure `quizIds` is an array of IDs
+        questionId: Number(questionId),
+      },
+    });
+
+    const correctAnswers = answers.filter(
+      (answer) => answer.isCorrect === true
+    );
+
+    const correctChoiceIds = correctAnswers.map((choice) => choice.id);
+
+    const isCorrect = correctChoiceIds.every((id) =>
+      selectedChoice.includes(id)
+    );
+
+    /**
+     * Create the selected answers in the database
+     * **/
+    const result = await prisma.answer.create({
+      data: {
+        isCorrect,
+        quizResultId: quizResultId,
+        questionId: questionId,
+        choices: {
+          create: selectedChoice.map((choice: string) => ({choiceId: choice})),
         },
+      },
+    });
+
+    const resultUpdate = await prisma.quizResult.update({
+      where: {id: quizResultId},
+      data: {
+        score: {increment: 1},
       },
     });
 

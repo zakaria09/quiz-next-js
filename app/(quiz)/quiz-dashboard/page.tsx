@@ -9,7 +9,7 @@ export default async function QuizDashboard() {
     <div className='py-6'>
       <div className='flex w-full justify-between pb-8 px-4 md:px-0'>
         <h1 className='text-xl font-semibold self-center'>Quiz Dashboard</h1>
-        <Link className='btn-primary-lg' href={'/create-quiz'}>
+        <Link className='btn-primary-lg' href={'/quiz-dashboard/create-quiz'}>
           Create a Quiz
         </Link>
       </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import {alphabet} from '@/app/components/CreateQuiz/shared/constants/constants';
-import {Choices} from '@/app/take-quiz/[id]/_components/MultipleChoice';
+import {Choices} from '@/app/(quiz)/take-quiz/[id]/_components/MultipleChoice';
 
 export default function ChoiceOptions({
   answer,

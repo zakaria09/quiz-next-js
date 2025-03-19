@@ -11,7 +11,7 @@ import React from 'react';
 import {MdEdit} from 'react-icons/md';
 import {FaEye} from 'react-icons/fa';
 import Link from 'next/link';
-import DeleteBtn from '@/app/quiz-dashboard/_components/DeleteBtn/DeleteBtn';
+import DeleteBtn from '@/app/(quiz)/quiz-dashboard/_components/DeleteBtn/DeleteBtn';
 
 export default async function Page({params}: {params: Promise<{id: string}>}) {
   const param = await params;

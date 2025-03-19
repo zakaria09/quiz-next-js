@@ -13,6 +13,20 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
+    async jwt({token, user}) {
+      // Ensure token.id exists if user is available
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({session, token}) {
+      // ✅ Fix: Ensure token.id exists before assigning
+      if (token?.id) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
     async signIn({user, account}) {
       if (!user.email) return false; // Ensure email exists
       if (!account) return false; // Ensure email exists

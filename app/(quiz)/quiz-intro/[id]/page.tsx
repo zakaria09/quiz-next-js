@@ -6,9 +6,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {prisma} from '@/lib/prisma';
-import Link from 'next/link';
 import React from 'react';
-import {FaRegArrowAltCircleRight} from 'react-icons/fa';
+import StartQuizBtn from '../_components/StartQuizBtn';
 
 export default async function QuizIntroPage({
   params,
@@ -46,13 +45,7 @@ export default async function QuizIntroPage({
         </CardContent>
         <CardFooter>
           <div className='flex gap-4'>
-            <Link
-              href={`/take-quiz/${quiz?.id}`}
-              className='btn-primary flex gap-1'
-            >
-              <FaRegArrowAltCircleRight className='self-center text-lg' />
-              Start Quiz
-            </Link>
+            <StartQuizBtn quizId={quiz?.id as number} />
           </div>
         </CardFooter>
       </Card>

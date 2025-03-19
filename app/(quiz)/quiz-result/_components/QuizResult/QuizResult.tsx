@@ -6,7 +6,7 @@ import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {Doughnut} from 'react-chartjs-2';
 import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js';
-import ShowAnswer from '../ShowAnswer/ShowAnswer';
+import ShowAnswer from '@/app/components/ShowAnswer/ShowAnswer';
 import useQuizStore from '@/store/quizStore';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -29,6 +29,9 @@ function QuizResult({quizId}: {quizId: number}) {
   });
 
   const selectedChoices = useQuizStore((store) => store.selectedChoices);
+
+  console.log('data', data);
+  console.log('selectedChoices - - ->', selectedChoices);
 
   useEffect(() => {
     if (data) {
