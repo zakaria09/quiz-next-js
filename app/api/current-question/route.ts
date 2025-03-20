@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   if (!quizResultId || !questionId) {
     return new NextResponse(
-      JSON.stringify({message: 'Quiz Result ID is required'}),
+      JSON.stringify({message: 'Quiz Result ID is required and questionId'}),
       {
         status: 400,
       }

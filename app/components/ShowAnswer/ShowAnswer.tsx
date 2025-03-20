@@ -2,7 +2,6 @@ import React from 'react';
 import {choiceAnswers} from '@/app/components/CreateQuiz/shared/types/types';
 import classNames from 'classnames';
 import {alphabet} from '@/app/components/CreateQuiz/shared/constants/constants';
-import {Answer} from '@/app/types/quiz';
 
 function ShowAnswer({
   answers,
@@ -11,8 +10,9 @@ function ShowAnswer({
 }: {
   answers: choiceAnswers;
   index: number;
-  selectedChoices: Answer[];
+  selectedChoices: Array<{id: string}>;
 }) {
+  console.log('selectedChoices - - - - >', selectedChoices);
   return (
     <div key={answers.id} className='block'>
       <button

@@ -88,7 +88,7 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
   });
 
   if (currentIndex === quiz.questions.length)
-    redirect(`/quiz-result/${quiz.id}`);
+    redirect(`/quiz-result/${quiz.id}?quizResultId=${quizResultId}`);
 
   const {question, answers, numOfCorrectAnswers} = quiz.questions[currentIndex];
 

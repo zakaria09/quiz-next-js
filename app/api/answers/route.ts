@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     /**
      * Create the selected answers in the database
      * **/
-    const result = await prisma.answer.create({
+    await prisma.answer.create({
       data: {
         isCorrect,
         quizResultId: quizResultId,
@@ -48,12 +48,16 @@ export async function POST(request: Request) {
       },
     });
 
-    const resultUpdate = await prisma.quizResult.update({
-      where: {id: quizResultId},
-      data: {
-        score: {increment: 1},
-      },
-    });
+    console.log('isCorrect', isCorrect);
+
+    if (isCorrect) {
+      await prisma.quizResult.update({
+        where: {id: quizResultId},
+        data: {
+          score: {increment: 1},
+        },
+      });
+    }
 
     return NextResponse.json({answers, status: 200}, {status: 200});
   } catch (error) {

@@ -1,5 +1,5 @@
 'use client';
-import {Answer, Quiz} from '@/app/types/quiz';
+import {Choice, Quiz} from '@/app/types/quiz';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
 import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
@@ -7,59 +7,38 @@ import React, {useEffect, useState} from 'react';
 import {Doughnut} from 'react-chartjs-2';
 import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js';
 import ShowAnswer from '@/app/components/ShowAnswer/ShowAnswer';
-import useQuizStore from '@/store/quizStore';
+import {useSearchParams} from 'next/navigation';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 interface SelectedChoices {
   id: number;
-  selected: Answer[];
+  selected: Choice[];
   correct: boolean;
   question: string;
-  choices: Answer[];
+  choices: Choice[];
 }
 
 function QuizResult({quizId}: {quizId: number}) {
+  const searchParams = useSearchParams();
+  const quizResultId = searchParams.get('quizResultId');
   const [choices, setChoices] = useState<SelectedChoices[]>([]);
   const [correct, setCorrect] = useState(0);
   const [incorrect, setIncorrect] = useState(0);
   const {data, isLoading} = useQuery({
     queryKey: ['questions', quizId],
     queryFn: async () =>
-      (await axios.get<Quiz>(`/api/multiple-choice?quizId=${quizId}`))?.data,
+      (await axios.get(`/api/results?quizResultId=${quizResultId}`))?.data,
   });
-
-  const selectedChoices = useQuizStore((store) => store.selectedChoices);
-
-  console.log('data', data);
-  console.log('selectedChoices - - ->', selectedChoices);
 
   useEffect(() => {
     if (data) {
-      const choices: SelectedChoices[] = [];
-      data?.questions.reduce((acc, questions) => {
-        const filteredChoices = selectedChoices.filter(
-          (choice) => choice.questionId === questions.id
-        );
-        choices.push({
-          id: questions.id,
-          selected: filteredChoices,
-          correct: filteredChoices.every((choice) => choice.isCorrect),
-          question: questions.question,
-          choices: questions.answers,
-        });
-        return acc;
-      }, 0);
+      const choices: SelectedChoices[] = data.quiz;
+
       setChoices(choices);
-      const correctCount = choices.filter(
-        (choice) => choice.correct === true
-      ).length;
-      const incorrectCount = choices.filter(
-        (choice) => choice.correct !== true
-      ).length;
-      setCorrect(correctCount);
-      setIncorrect(incorrectCount);
+      setCorrect(data.score);
+      setIncorrect(data.quiz.length - data.score);
     }
-  }, [data, selectedChoices]);
+  }, [data]);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -100,7 +79,7 @@ function QuizResult({quizId}: {quizId: number}) {
           </h2>
           <span className='flex gap-2'>
             <h1 className='text-2xl font-extrabold'>
-              {(correct / choices.length) * 100}%
+              {Math.round((correct / choices.length) * 100)}%
             </h1>
             <p className='text-md self-end'>
               Correct ({`${correct}/${choices.length}`})

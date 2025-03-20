@@ -11,11 +11,11 @@ interface Question {
   id: number;
   question: string;
   quizId: number;
-  answers: Answer[];
+  answers: Choice[];
   numOfCorrectAnswers: number;
 }
 
-export interface Answer {
+export interface Choice {
   id: string;
   choice: string;
   questionId: number;
