@@ -47,8 +47,8 @@ function QuizResult({quizId}: {quizId: number}) {
     datasets: [
       {
         data: [
-          (correct / choices.length) * 100,
-          (incorrect / choices.length) * 100,
+          Math.round((correct / choices.length) * 100),
+          Math.round((incorrect / choices.length) * 100),
         ],
         backgroundColor: ['#4caf50', '#f44336'],
         hoverBackgroundColor: ['#4caf50', '#f44336'],

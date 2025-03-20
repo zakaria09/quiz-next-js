@@ -48,20 +48,22 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log('selectedChoices', selectedChoices);
-
-    const response = [];
-
-    quizResult.quiz.questions.reduce((acc, answer) => {
-      response.push({
-        ...answer,
-        selected: selectedChoices[0].choices.map((choice) => ({
-          id: choice.choiceId,
-          questionId: choice.answer.questionId,
-        })),
-      });
-      return acc;
-    }, 0);
+    const response = quizResult.quiz.questions.map((answer) => ({
+      ...answer,
+      selected: selectedChoices.flatMap(
+        (choice) =>
+          choice.choices
+            .map((selected) =>
+              selected.answer.questionId === answer.id
+                ? {
+                    id: selected.choiceId,
+                    questionId: selected.answer.questionId,
+                  }
+                : null
+            )
+            .filter(Boolean) // Remove null values
+      ),
+    }));
 
     return NextResponse.json(
       {quiz: response, score: quizResult.score},
