@@ -12,8 +12,10 @@ export default function StartQuizBtn({quizId}: {quizId: number}) {
     mutationFn: () => axios.post(`/api/results`, {quizId}),
     onSuccess: (data) => {
       const {quizResultId} = data.data;
-      console.log('Quiz started successfully:', data);
       setQuizResultId(quizResultId);
+      /**
+       * WE WANT TO REDIRECT TO CONTINUE THE QUESTION THEY WERE ON IF THEY HAVE A QUIZ IN PROGRESS
+       * **/
       router.push(
         `/take-quiz/${quizId}?quizResultId=${quizResultId}&question=0`
       );

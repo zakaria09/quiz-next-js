@@ -15,6 +15,15 @@ export async function GET(request: Request) {
   }
 
   try {
+    await prisma.quizResult.update({
+      where: {
+        id: quizResultId,
+      },
+      data: {
+        isCompleted: true,
+      },
+    });
+
     const quizResult = await prisma.quizResult.findUnique({
       where: {
         id: quizResultId,
@@ -48,7 +57,7 @@ export async function GET(request: Request) {
       },
     });
 
-    const response = quizResult.quiz.questions.map((answer) => ({
+    const formattedQuizQuestions = quizResult.quiz.questions.map((answer) => ({
       ...answer,
       selected: selectedChoices.flatMap(
         (choice) =>
@@ -66,7 +75,12 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json(
-      {quiz: response, score: quizResult.score},
+      {
+        name: quizResult.quiz.name,
+        description: quizResult.quiz.description,
+        quiz: formattedQuizQuestions,
+        score: quizResult.score,
+      },
       {status: 200}
     );
   } catch (error) {
@@ -87,17 +101,9 @@ export async function POST(req: Request) {
     const quizCheck = await prisma.quizResult.findFirst({
       where: {
         quizId,
+        isCompleted: false,
       },
     });
-
-    if (quizCheck?.isCompleted) {
-      return NextResponse.json(
-        {
-          quizResultId: quizCheck.id,
-        },
-        {status: 200}
-      );
-    }
 
     if (!quizCheck) {
       const quizResult = await prisma.quizResult.create({

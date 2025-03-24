@@ -12,6 +12,7 @@ import {MdEdit} from 'react-icons/md';
 import {FaEye} from 'react-icons/fa';
 import Link from 'next/link';
 import DeleteBtn from '@/app/(quiz)/quiz-dashboard/_components/DeleteBtn/DeleteBtn';
+import PastQuizList from '@/app/components/PastQuizList/PastQuizList';
 
 export default async function Page({params}: {params: Promise<{id: string}>}) {
   const param = await params;
@@ -29,6 +30,27 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
       choices: true,
     },
   });
+  const quizResults = await prisma.quizResult.findMany({
+    where: {
+      quizId: id,
+      isCompleted: true,
+    },
+    include: {
+      quiz: {
+        include: {
+          questions: true,
+        },
+      },
+    },
+  });
+
+  const resultsOverview = quizResults.map((quiz) => ({
+    quizResultId: quiz.id,
+    correctTotal: quiz.score,
+    incorrectTotal: quiz.quiz.questions.length - quiz.score,
+    totalQuestions: quiz.quiz.questions.length,
+  }));
+
   /**
    * TODO: Database migration to chnage the schema from answers to choices
    * @see https://www.prisma.io/docs/concepts/components/prisma-migrate
@@ -59,9 +81,10 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
           </div>
         </CardFooter>
       </Card>
-      <div className='pt-8'>
+      <div className='py-8'>
         <QuestionList questions={questions} />
       </div>
+      <PastQuizList data={resultsOverview} />
     </div>
   );
 }

@@ -1,13 +1,13 @@
 'use client';
-import {Choice, Quiz} from '@/app/types/quiz';
+import {Choice} from '@/app/types/quiz';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
 import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Doughnut} from 'react-chartjs-2';
 import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js';
 import ShowAnswer from '@/app/components/ShowAnswer/ShowAnswer';
 import {useSearchParams} from 'next/navigation';
+import DoughnutChart from '@/app/components/DoughnutChart/DoughnutChart';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 interface SelectedChoices {
@@ -42,33 +42,6 @@ function QuizResult({quizId}: {quizId: number}) {
 
   if (isLoading) return <div>Loading...</div>;
 
-  const chartData = {
-    labels: ['Correct', 'Incorrect'],
-    datasets: [
-      {
-        data: [
-          Math.round((correct / choices.length) * 100),
-          Math.round((incorrect / choices.length) * 100),
-        ],
-        backgroundColor: ['#4caf50', '#f44336'],
-        hoverBackgroundColor: ['#4caf50', '#f44336'],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const chartConfig = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'bottom' as const,
-      },
-      tooltip: {
-        enabled: true,
-      },
-    },
-  };
-
   return (
     <div className='mt-8'>
       <Card>
@@ -88,19 +61,23 @@ function QuizResult({quizId}: {quizId: number}) {
         </CardHeader>
         <CardContent>
           <div className='max-h-72'>
-            <Doughnut data={chartData} options={chartConfig} />
+            <DoughnutChart
+              correct={correct}
+              incorrect={incorrect}
+              questionsTotal={choices.length}
+            />
           </div>
         </CardContent>
       </Card>
       <div>
-        {choices.map((choice, index) => (
+        {choices.map((choice) => (
           <Card key={choice.id} className='mt-4'>
             <CardHeader>
               <h1 className='text-xl font-semibold'>{choice.question}</h1>
             </CardHeader>
             <CardContent>
               <div className='space-y-4'>
-                {choice.choices.map((answer) => (
+                {choice.choices.map((answer, index) => (
                   <ShowAnswer
                     key={answer.id}
                     selectedChoices={choice.selected}
