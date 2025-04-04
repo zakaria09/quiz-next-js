@@ -5,6 +5,8 @@ import QuizIntro from '@/app/components/CreateQuiz/QuizIntro/QuizIntro';
 import {addQuiz} from '@/actions/actions';
 import Stepper from '@/app/components/Stepper/Stepper';
 import useQuizStore from '@/store/quizStore';
+import {useSession} from 'next-auth/react';
+import LoadingSpinner from '@/app/components/LoadingSpinner/LoadingSpinner';
 
 const steps = [
   {
@@ -20,25 +22,8 @@ const steps = [
 function CreateQuizPage() {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const {name, description, questions, reset} = useQuizStore();
-
-  /*
-  const mutation = useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: async (data: any) => {
-      const response = await axios.post('/api/multiple-choice', data);
-      return response.data;
-    },
-    onSuccess: () => {
-      // Navigate to the quiz-dashboard on successful submission
-      router.push('/quiz-dashboard');
-    },
-    onError: (error) => {
-      console.error('Error creating quiz:', error);
-      alert('Failed to create the quiz. Please try again.');
-    },
-  });
-  */
+  const {name, description, questions, users, reset} = useQuizStore();
+  const {data: session, status} = useSession();
 
   const handleIntro = () => {
     setCurrentStep((currentStep) => currentStep + 1);
@@ -46,10 +31,11 @@ function CreateQuizPage() {
 
   const handleFinish = () => {
     setLoading(true);
-    console.log('questions', questions);
     const payload = {
       name,
       description,
+      users: {connect: users.map((user) => ({id: user.id}))},
+      createdBy: {connect: {id: session?.user.id}},
       questions: {
         create: questions.map((question) => {
           return {
@@ -65,11 +51,16 @@ function CreateQuizPage() {
       },
       updatedAt: new Date(),
     };
-    // mutation.mutate(payload);
     console.log(payload);
     addQuiz(payload);
     reset();
   };
+
+  console.log('session', session, status);
+
+  if (status === 'unauthenticated') return <div>Unauthorized</div>;
+  if (!session?.user.id) return <LoadingSpinner />;
+
   return (
     <div className='mt-8'>
       <Stepper

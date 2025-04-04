@@ -21,6 +21,9 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
     where: {
       id,
     },
+    include: {
+      users: true,
+    },
   });
   const questions = await prisma.question.findMany({
     where: {
@@ -84,7 +87,12 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
       <div className='py-8'>
         <QuestionList questions={questions} />
       </div>
-      <PastQuizList data={resultsOverview} />
+      {quiz?.users.map((user) => (
+        <div key={user.id} className='py-4'>
+          <p className='text-slate-600'>{user.name}</p>
+        </div>
+      ))}
+      {/* <PastQuizList data={resultsOverview} /> */}
     </div>
   );
 }

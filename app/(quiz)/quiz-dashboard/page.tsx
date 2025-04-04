@@ -1,10 +1,25 @@
 import {Card} from '@/components/ui/card';
 import {prisma} from '@/lib/prisma';
+import {getUserSession} from '@/lib/session';
 import Link from 'next/link';
 import React from 'react';
 
 export default async function QuizDashboard() {
-  const quizzes = await prisma.quiz.findMany();
+  const session = await getUserSession();
+
+  if (!session) {
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <h1 className='text-2xl font-semibold'>Please login to continue</h1>
+      </div>
+    );
+  }
+
+  const quizzes = await prisma.quiz.findMany({
+    where: {
+      createdById: session.id,
+    },
+  });
   return (
     <div className='py-6'>
       <div className='flex w-full justify-between pb-8 px-4 md:px-0'>

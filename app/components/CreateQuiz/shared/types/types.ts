@@ -1,5 +1,5 @@
 export interface choiceAnswers {
-  id: string | number;
+  id: string;
   choice: string;
   isCorrect: boolean;
   questionId?: number;
