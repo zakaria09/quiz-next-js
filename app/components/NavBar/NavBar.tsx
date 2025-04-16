@@ -74,15 +74,6 @@ export default function NavBar() {
                 Quizzes
               </Link>
             </li>
-            <li>
-              <Link
-                className='link'
-                href={'/contact'}
-                onClick={handleToggleNav}
-              >
-                Contact
-              </Link>
-            </li>
             <li className='flex gap-4'>
               {!session ? (
                 <>
@@ -92,13 +83,6 @@ export default function NavBar() {
                     onClick={handleToggleNav}
                   >
                     <button>Login</button>
-                  </Link>
-                  <Link
-                    className='btn-outline primary'
-                    href={'/signup'}
-                    onClick={handleToggleNav}
-                  >
-                    <button>Sign Up</button>
                   </Link>
                 </>
               ) : (

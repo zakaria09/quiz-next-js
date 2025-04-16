@@ -22,7 +22,6 @@ model Quiz {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   results     QuizResult[] // Fix: Establish bidirectional relation with QuizResult
-  users       User[]       @relation("UsersTakingQuizzes") // Many-to-Many relationship with User
 
   // One-to-Many: The user who created the quiz
   createdBy   User   @relation("UserCreatedQuizzes", fields: [createdById], references: [id])
@@ -108,9 +107,6 @@ model User {
 
   // One-to-Many: Quizzes this user created
   createdQuizzes Quiz[] @relation("UserCreatedQuizzes")
-
-  // Many-to-Many: Quizzes this user has taken/interacted with
-  assignedQuizzes Quiz[] @relation("UsersTakingQuizzes")
 
   accounts    Account[]
   quizResults QuizResult[] // Fix: Establish bidirectional relation with QuizResult

@@ -21,9 +21,6 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
     where: {
       id,
     },
-    include: {
-      users: true,
-    },
   });
   const questions = await prisma.question.findMany({
     where: {
@@ -54,10 +51,6 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
     totalQuestions: quiz.quiz.questions.length,
   }));
 
-  /**
-   * TODO: Database migration to chnage the schema from answers to choices
-   * @see https://www.prisma.io/docs/concepts/components/prisma-migrate
-   */
   return (
     <div className='py-8'>
       <Card>
@@ -87,12 +80,7 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
       <div className='py-8'>
         <QuestionList questions={questions} />
       </div>
-      {quiz?.users.map((user) => (
-        <div key={user.id} className='py-4'>
-          <p className='text-slate-600'>{user.name}</p>
-        </div>
-      ))}
-      {/* <PastQuizList data={resultsOverview} /> */}
+      <PastQuizList data={resultsOverview} />
     </div>
   );
 }

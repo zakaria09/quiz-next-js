@@ -6,7 +6,6 @@ import {addQuiz} from '@/actions/actions';
 import Stepper from '@/app/components/Stepper/Stepper';
 import useQuizStore from '@/store/quizStore';
 import {useSession} from 'next-auth/react';
-import LoadingSpinner from '@/app/components/LoadingSpinner/LoadingSpinner';
 
 const steps = [
   {
@@ -22,19 +21,20 @@ const steps = [
 function CreateQuizPage() {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const {name, description, questions, users, reset} = useQuizStore();
+  const {name, description, questions, reset} = useQuizStore();
   const {data: session, status} = useSession();
 
   const handleIntro = () => {
     setCurrentStep((currentStep) => currentStep + 1);
   };
 
+  console.log('session', session?.user);
+
   const handleFinish = () => {
     setLoading(true);
     const payload = {
       name,
       description,
-      users: {connect: users.map((user) => ({id: user.id}))},
       createdBy: {connect: {id: session?.user.id}},
       questions: {
         create: questions.map((question) => {
@@ -59,7 +59,8 @@ function CreateQuizPage() {
   console.log('session', session, status);
 
   if (status === 'unauthenticated') return <div>Unauthorized</div>;
-  if (!session?.user.id) return <LoadingSpinner />;
+
+  if (status === 'loading') return <p>Loading...</p>;
 
   return (
     <div className='mt-8'>

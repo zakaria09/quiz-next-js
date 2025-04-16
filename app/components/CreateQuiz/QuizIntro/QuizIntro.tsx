@@ -14,80 +14,28 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import React from 'react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
-import {useQuery} from '@tanstack/react-query';
-import Select from 'react-select';
-import axios from 'axios';
-import LoadingSpinner from '@/app/components/LoadingSpinner/LoadingSpinner';
 
 const formSchema = z.object({
   name: z.string().min(3, 'Please enter a name.'),
   description: z.string().min(3, 'Please enter a description.'),
-  users: z
-    .array(z.object({value: z.string(), label: z.string()}))
-    .min(1, 'Please assign at least one user.'),
 });
 
-type Option = {
-  value: string;
-  label: string;
-};
-
 function QuizIntro({next}: {next: () => void}) {
-  const {data, isLoading} = useQuery<Option[]>({
-    queryKey: ['users'],
-    queryFn: async () => (await axios('/api/users')).data,
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       description: '',
-      users: [],
     },
   });
 
-  const {setName, setDescription, setUsers} = useQuizStore();
+  const {setName, setDescription} = useQuizStore();
 
-  const onSubmit = (data: {
-    name: string;
-    description: string;
-    users: Option[];
-  }) => {
+  const onSubmit = (data: {name: string; description: string}) => {
     const {name, description} = data;
     setName(name);
     setDescription(description);
-    const selectedUsers = data.users.map((user) => ({
-      id: user.value,
-      name: user.label,
-    }));
-    setUsers(selectedUsers);
     next();
-  };
-
-  const renderUserSelect = () => {
-    if (isLoading) return <LoadingSpinner />;
-    return (
-      <FormField
-        control={form.control}
-        name='users'
-        render={({field}) => (
-          <FormItem>
-            <FormLabel>Assign Users</FormLabel>
-            <FormControl>
-              <Select
-                {...field}
-                options={data}
-                value={field.value}
-                onChange={(selectedOptions) => field.onChange(selectedOptions)}
-                isMulti
-              />
-            </FormControl>
-            <FormMessage></FormMessage>
-          </FormItem>
-        )}
-      />
-    );
   };
 
   return (
@@ -129,7 +77,6 @@ function QuizIntro({next}: {next: () => void}) {
                     </FormItem>
                   )}
                 />
-                {renderUserSelect()}
                 <div className='flex justify-end pt-6'>
                   <button type='submit' className='btn-primary'>
                     Next

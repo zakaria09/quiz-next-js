@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({session, token}) {
-      // ✅ Fix: Ensure token.id exists before assigning
+      // Ensure token.id exists before assigning
       if (token?.id) {
         session.user.id = token.id as string;
       }
