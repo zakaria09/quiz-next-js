@@ -1,17 +1,14 @@
-import {prisma} from '@/lib/prisma';
-import {getUserSession} from '@/lib/session';
-import {NextResponse} from 'next/server';
-export const dynamic = 'force-dynamic';
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const session = await getUserSession();
-  console.log('session', session?.id);
   try {
-    const {questionId, quizResultId, selectedChoice} = await request.json();
+    const { questionId, quizResultId, selectedChoice } = await request.json();
 
     if (!questionId) {
       return new NextResponse(
-        JSON.stringify({message: 'Quiz ID is required'}),
+        JSON.stringify({ message: "Quiz ID is required" }),
         {
           status: 400,
         }
@@ -43,38 +40,41 @@ export async function POST(request: Request) {
         quizResultId: quizResultId,
         questionId: questionId,
         choices: {
-          create: selectedChoice.map((choice: string) => ({choiceId: choice})),
+          create: selectedChoice.map((choice: string) => ({
+            choiceId: choice,
+          })),
         },
       },
     });
 
-    console.log('isCorrect', isCorrect);
-
     if (isCorrect) {
       await prisma.quizResult.update({
-        where: {id: quizResultId},
+        where: { id: quizResultId },
         data: {
-          score: {increment: 1},
+          score: { increment: 1 },
         },
       });
     }
 
-    return NextResponse.json({answers, status: 200}, {status: 200});
+    return NextResponse.json({ answers, status: 200 }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      {error: error, message: 'Failed to fetch answers'},
-      {status: 500}
+      { error: error, message: "Failed to fetch answers" },
+      { status: 500 }
     );
   }
 }
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const quizId = url.searchParams.get('quizId');
+  const quizId = url.searchParams.get("quizId");
   if (!quizId) {
-    return new NextResponse(JSON.stringify({message: 'Quiz ID is required'}), {
-      status: 400,
-    });
+    return new NextResponse(
+      JSON.stringify({ message: "Quiz ID is required" }),
+      {
+        status: 400,
+      }
+    );
   }
 
   try {
@@ -91,11 +91,11 @@ export async function GET(request: Request) {
       },
     });
 
-    return NextResponse.json(quizAnswers, {status: 200});
+    return NextResponse.json(quizAnswers, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      {error: error, message: 'Failed to fetch answers'},
-      {status: 500}
+      { error: error, message: "Failed to fetch answers" },
+      { status: 500 }
     );
   }
 }

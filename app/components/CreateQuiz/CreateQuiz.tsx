@@ -1,9 +1,10 @@
-'use client';
-import React from 'react';
-import MultipleChoiceForm from './MultipleChoiceForm/MultipleChoiceForm';
-import QuestionList from './QuestionList/QuestionList';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import useQuizStore from '@/store/quizStore';
+"use client";
+import React from "react";
+import MultipleChoiceForm from "./MultipleChoiceForm/MultipleChoiceForm";
+import QuestionList from "./QuestionList/QuestionList";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
+import useQuizStore from "@/store/quizStore";
+import AIGenerateQuestion from "./AIGenerateQuestion/AIGenerateQuestion";
 
 function CreateQuiz({
   onFinish,
@@ -12,7 +13,7 @@ function CreateQuiz({
   onFinish: () => void;
   isLoading: boolean;
 }) {
-  const {questions} = useQuizStore();
+  const { questions } = useQuizStore();
 
   const handleFinish = () => {
     onFinish();
@@ -20,8 +21,8 @@ function CreateQuiz({
 
   if (isLoading) {
     return (
-      <div className='flex justify-center h-72'>
-        <div className='self-center'>
+      <div className="flex justify-center h-72">
+        <div className="self-center">
           <LoadingSpinner />
         </div>
       </div>
@@ -30,13 +31,14 @@ function CreateQuiz({
 
   return (
     <div>
-      <MultipleChoiceForm />
+      <AIGenerateQuestion />
+      {/* <MultipleChoiceForm /> */}
       {questions.length > 0 && (
         <QuestionList questions={questions}>
-          <div className='flex justify-end pt-6'>
+          <div className="flex justify-end pt-6">
             <button
-              type='button'
-              className='btn-primary'
+              type="button"
+              className="btn-primary"
               onClick={handleFinish}
             >
               Finish Quiz

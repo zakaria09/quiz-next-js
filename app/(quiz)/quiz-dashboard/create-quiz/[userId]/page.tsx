@@ -1,41 +1,42 @@
-'use client';
-import {useState} from 'react';
-import CreateQuiz from '@/app/components/CreateQuiz/CreateQuiz';
-import QuizIntro from '@/app/components/CreateQuiz/QuizIntro/QuizIntro';
-import {addQuiz} from '@/actions/actions';
-import Stepper from '@/app/components/Stepper/Stepper';
-import useQuizStore from '@/store/quizStore';
-import {useSession} from 'next-auth/react';
+"use client";
+import { useState } from "react";
+import CreateQuiz from "@/app/components/CreateQuiz/CreateQuiz";
+import QuizIntro from "@/app/components/CreateQuiz/QuizIntro/QuizIntro";
+import { addQuiz } from "@/actions/actions";
+import Stepper from "@/app/components/Stepper/Stepper";
+import useQuizStore from "@/store/quizStore";
+import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 
 const steps = [
   {
-    id: 'Step 1',
-    name: 'Quiz Information',
+    id: "Step 1",
+    name: "Quiz Information",
   },
   {
-    id: 'Step 2',
-    name: 'Questions',
+    id: "Step 2",
+    name: "Questions",
   },
 ];
 
 function CreateQuizPage() {
+  const params = useParams();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const {name, description, questions, reset} = useQuizStore();
-  const {data: session, status} = useSession();
+  const { name, description, questions, reset } = useQuizStore();
+  const { status } = useSession();
+  const userId = params.userId;
 
   const handleIntro = () => {
     setCurrentStep((currentStep) => currentStep + 1);
   };
-
-  console.log('session', session?.user);
 
   const handleFinish = () => {
     setLoading(true);
     const payload = {
       name,
       description,
-      createdBy: {connect: {id: session?.user.id}},
+      createdBy: { connect: { id: userId } },
       questions: {
         create: questions.map((question) => {
           return {
@@ -56,14 +57,10 @@ function CreateQuizPage() {
     reset();
   };
 
-  console.log('session', session, status);
-
-  if (status === 'unauthenticated') return <div>Unauthorized</div>;
-
-  if (status === 'loading') return <p>Loading...</p>;
+  if (status === "unauthenticated") return <div>Unauthorized</div>;
 
   return (
-    <div className='mt-8'>
+    <div className="mt-8">
       <Stepper
         steps={steps}
         currentStep={currentStep}

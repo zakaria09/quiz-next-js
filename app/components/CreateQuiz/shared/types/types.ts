@@ -6,7 +6,7 @@ export interface choiceAnswers {
 }
 
 export interface MultipleChoiceQuestion {
-  id?: number;
+  id?: string; // Updated to string to match UUID format
   question: string;
   quizId?: number;
   choices: choiceAnswers[];
