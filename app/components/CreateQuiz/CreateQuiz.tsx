@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import MultipleChoiceForm from './MultipleChoiceForm/MultipleChoiceForm';
+// import MultipleChoiceForm from './MultipleChoiceForm/MultipleChoiceForm';
 import QuestionList from './QuestionList/QuestionList';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import useQuizStore from '@/store/quizStore';
@@ -36,7 +36,9 @@ function CreateQuiz({
       <AIGenerateQuestion />
       {/* <MultipleChoiceForm /> */}
       {questions.length > 0 && (
-        <QuestionList questions={questions}>
+        <QuestionList
+          questions={questions.map((q) => ({...q, id: q.id?.toString()}))}
+        >
           <div className='flex justify-end pt-6'>
             <button
               type='button'

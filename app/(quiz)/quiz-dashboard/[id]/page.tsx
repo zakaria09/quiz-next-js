@@ -79,7 +79,12 @@ export default async function Page({params}: {params: Promise<{id: string}>}) {
         </CardFooter>
       </Card>
       <div className='py-8'>
-        <QuestionList questions={questions} />
+        <QuestionList
+          questions={questions.map((question) => ({
+            ...question,
+            id: question.id.toString(),
+          }))}
+        />
       </div>
       <PastQuizList data={resultsOverview} />
     </div>

@@ -5,11 +5,11 @@ interface Choice {
   id: string;
   choice: string;
   isCorrect: boolean;
-  questionId?: string;
+  questionId?: number;
 }
 
 interface Question {
-  id?: string; // Updated to string to match UUID format
+  id?: string | number;
   question: string;
   quizId?: number;
   choices: Choice[];
@@ -55,7 +55,11 @@ const useQuizStore = create<QuizState>((set) => ({
     set((state) => ({
       questions: [
         ...state.questions,
-        {id: uuidv4(), question, choices: choices}, // Use uuidv4 to generate a unique ID
+        {
+          id: Math.random().toString(36).substring(2, 10),
+          question,
+          choices: choices,
+        }, // Use uuidv4 to generate a unique ID
       ],
     })),
 
@@ -64,13 +68,14 @@ const useQuizStore = create<QuizState>((set) => ({
       questions: [
         ...state.questions,
         ...questions.map((question) => ({
-          id: uuidv4(), // Use uuidv4 to generate a unique ID
+          id: Math.floor(Math.random() * 1000000), // Generate a unique numeric ID
           question: question.question,
           choices: question.choices.map((choice) => ({
-            id: uuidv4(), // Use uuidv4 to generate a unique ID for each choice
+            id: uuidv4(), // Generate a unique string ID for each choice
             choice: choice.choice,
             isCorrect: choice.isCorrect,
-            questionId: question.id,
+            questionId:
+              typeof question.id === 'number' ? question.id : undefined,
           })),
         })),
       ],

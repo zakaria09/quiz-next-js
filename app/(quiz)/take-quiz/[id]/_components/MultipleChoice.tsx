@@ -123,7 +123,7 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
       setSelectedChoices(
         selectedAnswers.map((answer) => ({
           ...answer,
-          questionId: answer.questionId.toString(),
+          questionId: Math.floor(100000 + Math.random() * 900000),
         }))
       );
       setSelectedAnswers([]);

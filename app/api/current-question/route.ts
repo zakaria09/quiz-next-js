@@ -1,3 +1,4 @@
+import {Choice} from '@/app/types/quiz';
 import {prisma} from '@/lib/prisma';
 import {NextResponse} from 'next/server';
 
@@ -39,8 +40,8 @@ export async function GET(request: Request) {
       },
     });
 
-    if (quizResult?.answers.length > 0) {
-      const selectedChoices = [];
+    if (quizResult?.answers && quizResult.answers.length > 0) {
+      const selectedChoices: Choice[] = [];
       const [answer] = quizResult.answers;
       const selectedIds = answer.choices.map((selected) => selected.choiceId);
       answer.question.choices.map((choice) => {

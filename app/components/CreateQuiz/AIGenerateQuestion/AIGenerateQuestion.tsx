@@ -52,15 +52,7 @@ export default function AIGenerateQuestion() {
       return response.data;
     },
     onSuccess: (data) => {
-      addQuestions(
-        data.map((question) => ({
-          ...question,
-          choices: question.choices.map((choice) => ({
-            ...choice,
-            questionId: choice.questionId?.toString(), // Convert questionId to string
-          })),
-        }))
-      );
+      addQuestions(data);
       shuffleChoices();
       form.reset();
     },

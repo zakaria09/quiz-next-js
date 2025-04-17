@@ -2,7 +2,7 @@ export interface choiceAnswers {
   id: string;
   choice: string;
   isCorrect: boolean;
-  questionId?: number;
+  questionId?: number; // Updated to string to match UUID format
 }
 
 export interface MultipleChoiceQuestion {
