@@ -25,7 +25,7 @@ export default function ChoiceOptions({
             : ''
         )}
       >
-        <p>
+        <p className='group-hover:font-bold'>
           {alphabet[index]} {') '}
           <span
             className={classNames(

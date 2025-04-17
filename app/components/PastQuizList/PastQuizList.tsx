@@ -9,6 +9,7 @@ import Link from 'next/link';
 import React from 'react';
 
 type resultsData = {
+  quizId: number;
   quizResultId: string;
   correctTotal: number;
   incorrectTotal: number;
@@ -36,7 +37,7 @@ export default function PastQuizList({data}: {data: resultsData[]}) {
               <AccordionContent>
                 <div className='py-4'>
                   <Link
-                    href={`/quiz-result/1?quizResultId=${quiz.quizResultId}`}
+                    href={`/quiz-result/${quiz.quizId}?quizResultId=${quiz.quizResultId}`}
                     className='btn-primary-lg'
                   >
                     View Detailed Breakdown

@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { v4 as uuidv4 } from "uuid"; // Import the v4 method from uuid
+import {create} from 'zustand';
+import {v4 as uuidv4} from 'uuid'; // Import the v4 method from uuid
 
 interface Choice {
   id: string;
@@ -27,24 +27,35 @@ interface QuizState {
   addQuestions: (questions: Question[]) => void;
   setQuizResultId: (quizResultId: number) => void;
   reset: () => void;
+  shuffleChoices: () => void;
+}
+
+// Utility function to shuffle an array using Fisher-Yates algorithm
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 const useQuizStore = create<QuizState>((set) => ({
-  name: "",
-  description: "",
+  name: '',
+  description: '',
   questions: [],
   selectedChoices: [],
   quizResultId: null,
 
-  setName: (name) => set(() => ({ name })),
-  setDescription: (description) => set(() => ({ description })),
-  setQuizResultId: (quizResultId: number) => set(() => ({ quizResultId })),
+  setName: (name) => set(() => ({name})),
+  setDescription: (description) => set(() => ({description})),
+  setQuizResultId: (quizResultId: number) => set(() => ({quizResultId})),
 
   addQuestion: (question, choices) =>
     set((state) => ({
       questions: [
         ...state.questions,
-        { id: uuidv4(), question, choices: choices }, // Use uuidv4 to generate a unique ID
+        {id: uuidv4(), question, choices: choices}, // Use uuidv4 to generate a unique ID
       ],
     })),
 
@@ -65,12 +76,20 @@ const useQuizStore = create<QuizState>((set) => ({
       ],
     })),
 
-  reset: () => set(() => ({ name: "", description: "", questions: [] })),
+  reset: () => set(() => ({name: '', description: '', questions: []})),
 
   setselectedChoices: (selectedChoices: Choice[]) =>
     set((state) => ({
       ...state,
       selectedChoices: [...state.selectedChoices, ...selectedChoices],
+    })),
+
+  shuffleChoices: () =>
+    set((state) => ({
+      questions: state.questions.map((question) => ({
+        ...question,
+        choices: shuffleArray(question.choices),
+      })),
     })),
 }));
 

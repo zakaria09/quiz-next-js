@@ -24,6 +24,7 @@ function QuizResult({quizId}: {quizId: number}) {
   const [choices, setChoices] = useState<SelectedChoices[]>([]);
   const [correct, setCorrect] = useState(0);
   const [incorrect, setIncorrect] = useState(0);
+  console.log(quizResultId);
   const {data, isLoading} = useQuery({
     queryKey: ['questions', quizId],
     queryFn: async () =>

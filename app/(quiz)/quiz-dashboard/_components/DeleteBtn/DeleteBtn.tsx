@@ -30,9 +30,7 @@ export default function DeleteBtn() {
       console.log('error');
     },
     onSuccess: () => {
-      // Boom baby!
       router.push('/quiz-dashboard');
-      console.log('success');
     },
   });
 
@@ -40,9 +38,9 @@ export default function DeleteBtn() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className='btn-outline warn flex gap-1'
+        className='btn-outline warn flex gap-1 self-center'
       >
-        <MdDeleteOutline className='self-center text-lg' />
+        <MdDeleteOutline className='text-lg self-center' />
         Delete
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -66,7 +64,6 @@ export default function DeleteBtn() {
               <button
                 className='btn-outline warn'
                 onClick={() => {
-                  console.log('Quiz deleted');
                   mutation.mutate();
                 }}
               >

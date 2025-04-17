@@ -40,7 +40,7 @@ export default function NavBar() {
         ref={menuRef}
         className='sticky top-0 shadow-sm z-50 bg-white border-b-4 border-gray-200 border-solid'
       >
-        <div className='flex justify-around mx-auto py-10 relative'>
+        <div className='flex justify-between container mx-auto py-10 relative'>
           <Link
             href={'/'}
             className='text-xl my-auto bg-gradient-to-t from-slate-600 to-slate-900 bg-clip-text text-transparent'
@@ -61,7 +61,7 @@ export default function NavBar() {
               `absolute left-0  bg-white  w-full flex 
               flex-col gap-8 items-center py-8 border-b-4 border-gray-200 
               border-solid md:static md:border-0
-              md:flex-row md:justify-between md:max-w-[32rem] md:p-0`,
+              md:flex-row justify-end md:max-w-[32rem] md:p-0`,
               `${navOpen ? 'top-[116px]' : 'top-[-390px]'}`
             )}
           >

@@ -17,6 +17,7 @@ import ChoiceOptions from '@/app/components/ChoiceOptions/ChoiceOptions';
 import useQuizStore from '@/store/quizStore';
 import {redirect, usePathname, useRouter} from 'next/navigation';
 import {useSearchParams} from 'next/navigation';
+import {Progress} from '@/components/ui/progress';
 
 export interface Choices {
   id: string;
@@ -50,14 +51,13 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
   const quizResultId = searchParams.get('quizResultId');
   const currentQuestionIndex = searchParams.get('question');
   const currentIndex = Number(currentQuestionIndex || '0');
-  // const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Choices[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const setSelectedChoices = useQuizStore((store) => store.setselectedChoices);
 
   /***
-   * See if teh user has already answered a quiz question
+   * See if the user has already answered a quiz question
    * ***/
   const {data: currentQuestion, isLoading: loadingCurrentQuestion} =
     useQuery<CurrentQuestionApi>({
@@ -118,10 +118,14 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
       setIsSubmitted(true);
       mutation.mutate();
     } else {
-      // setCurrentIndex((prev) => prev + 1);
       params.set('question', String(currentIndex + 1));
       replace(`${pathname}?${params.toString()}`);
-      setSelectedChoices(selectedAnswers);
+      setSelectedChoices(
+        selectedAnswers.map((answer) => ({
+          ...answer,
+          questionId: answer.questionId.toString(),
+        }))
+      );
       setSelectedAnswers([]);
       setIsSubmitted(false);
     }
@@ -129,6 +133,19 @@ function MultipleChoice({quiz}: {quiz: Quiz}) {
 
   return (
     <div className='pt-8'>
+      <div className='mb-8 flex justify-center'>
+        <Card className='max-w-xl'>
+          <CardHeader className='text-sm'>
+            <p className='pb-1 text-slate-600'>
+              Question {currentIndex + 1} of {quiz.questions.length}
+            </p>
+            <Progress
+              value={((currentIndex + 1) / quiz.questions.length) * 100}
+              max={quiz.questions.length}
+            />
+          </CardHeader>
+        </Card>
+      </div>
       <Card>
         <CardHeader className='text-lg'>
           {question}
