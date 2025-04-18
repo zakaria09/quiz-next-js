@@ -6,12 +6,17 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
-  const { topic, numberOfQuestions } = await req.json();
+  const { topic, numberOfQuestions, difficulty = "medium" } = await req.json();
 
   const numOfQuestions = numberOfQuestions ?? 1;
 
   const systemPrompt = `
-Generate ${numOfQuestions} multiple choice questions on the topic: "${topic}".
+Generate ${numOfQuestions} ${difficulty}-level multiple choice questions on the topic: "${topic}".
+
+Rubric:
+- Easy: direct recall of a fact.
+- Medium: apply or compare concepts.
+- Hard: multi‑step reasoning or hypothetical scenarios.
 
 Each question should have:
 - A "question" string.
@@ -34,9 +39,10 @@ Return ONLY valid JSON in the following format:
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: difficulty === "hard" ? "gpt-4" : "gpt-3.5-turbo",
       messages: [{ role: "user", content: systemPrompt }],
-      temperature: 0.7,
+      temperature:
+        difficulty === "easy" ? 0.3 : difficulty === "hard" ? 0.8 : 0.6,
     });
 
     const response = completion.choices[0].message.content;

@@ -1,5 +1,5 @@
 'use client";';
-import {Card, CardContent, CardHeader} from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -7,22 +7,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import {Textarea} from '@/components/ui/textarea';
-import {Slider} from '@/components/ui/slider'; // Import the Slider component
-import {zodResolver} from '@hookform/resolvers/zod';
-import React from 'react';
-import {useForm} from 'react-hook-form';
-import {z} from 'zod';
-import {useMutation} from '@tanstack/react-query';
-import axios from 'axios';
-import useQuizStore from '@/store/quizStore';
-import {MultipleChoiceQuestion} from '../shared/types/types';
-import {ProgressBar} from 'react-loader-spinner';
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider"; // Import the Slider component
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Import the Select component
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import useQuizStore from "@/store/quizStore";
+import { MultipleChoiceQuestion } from "../shared/types/types";
+import { ProgressBar } from "react-loader-spinner";
 
 const formSchema = z.object({
-  question: z.string().min(3, 'Please enter a question for the AI.'),
+  question: z.string().min(3, "Please enter a question for the AI."),
   numberOfQuestions: z.number().min(1).max(5), // Add validation for the slider
+  difficulty: z.enum(["easy", "medium", "hard"]).default("medium"), // Add difficulty field
 });
 
 type questionType = z.infer<typeof formSchema>;
@@ -31,23 +39,25 @@ export default function AIGenerateQuestion() {
   const form = useForm<questionType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      question: '',
+      question: "",
       numberOfQuestions: 1, // Default value for the slider
+      difficulty: "medium", // Default value for difficulty
     },
   });
 
-  const {addQuestions, shuffleChoices} = useQuizStore();
+  const { addQuestions, shuffleChoices } = useQuizStore();
 
   const mutation = useMutation<
     MultipleChoiceQuestion[],
     Error,
-    {question: string; numberOfQuestions: number}
+    { question: string; numberOfQuestions: number; difficulty: string }
   >({
     mutationFn: async (data) => {
-      const {question, numberOfQuestions} = data;
-      const response = await axios.post('/api/quiz-ai', {
+      const { question, numberOfQuestions, difficulty } = data;
+      const response = await axios.post("/api/quiz-ai", {
         topic: question,
         numberOfQuestions,
+        difficulty,
       });
       return response.data;
     },
@@ -57,7 +67,7 @@ export default function AIGenerateQuestion() {
       form.reset();
     },
     onError: (error) => {
-      console.error('Error generating question:', error);
+      console.error("Error generating question:", error);
     },
   });
 
@@ -68,10 +78,10 @@ export default function AIGenerateQuestion() {
 
   return (
     <div>
-      <div className='py-8'>
-        <Card className=' px-6 py-8'>
+      <div className="py-8">
+        <Card className=" px-6 py-8">
           <CardHeader>
-            <h1 className='font-semibold text-lg'>
+            <h1 className="font-semibold text-lg">
               Generate Multiple Choice Question With AI
             </h1>
           </CardHeader>
@@ -80,15 +90,15 @@ export default function AIGenerateQuestion() {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                   control={form.control}
-                  name='question'
-                  render={({field}) => (
+                  name="question"
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>
                         Generate a multiple choice question on the topic
                       </FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder='write your topic here...'
+                          placeholder="write your topic here..."
                           {...field}
                         />
                       </FormControl>
@@ -98,8 +108,8 @@ export default function AIGenerateQuestion() {
                 />
                 <FormField
                   control={form.control}
-                  name='numberOfQuestions'
-                  render={({field}) => (
+                  name="numberOfQuestions"
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Number of questions to generate</FormLabel>
                       <FormControl>
@@ -109,34 +119,59 @@ export default function AIGenerateQuestion() {
                           step={1}
                           value={[field.value]} // Slider expects an array
                           onValueChange={(value) => field.onChange(value[0])} // Update the form value
-                          className='cursor-grab'
+                          className="cursor-grab"
                         />
                       </FormControl>
-                      <div className='text-sm text-gray-500 mt-2'>
+                      <div className="text-sm text-gray-500 mt-2">
                         Generate {field.value} Multiple Choice Question
-                        {field.value > 1 ? 's' : ''}
+                        {field.value > 1 ? "s" : ""}
                       </div>
                       <FormMessage></FormMessage>
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="difficulty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Difficulty of questions</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange} // Update the form value
+                          defaultValue={field.value} // Set the default value
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="easy">Easy</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="hard">Hard</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage></FormMessage>
+                    </FormItem>
+                  )}
+                />
                 <button
-                  type='submit'
-                  className='btn-primary mt-4 flex gap-2'
+                  type="submit"
+                  className="btn-primary mt-4 flex gap-2"
                   disabled={mutation.isPending}
                 >
                   {mutation.isPending ? (
-                    <span className='self-center'>
+                    <span className="self-center">
                       <ProgressBar
                         visible={true}
                         height={20}
                         width={20}
-                        ariaLabel='progress-bar-loading'
-                        wrapperClass=''
+                        ariaLabel="progress-bar-loading"
+                        wrapperClass=""
                       />
                     </span>
                   ) : null}
-                  {mutation.isPending ? 'Generating...' : 'Generate'}
+                  {mutation.isPending ? "Generating..." : "Generate"}
                 </button>
               </form>
             </Form>

@@ -35,6 +35,18 @@ model Question {
   quizId   Int // Foreign key for one-to-many relationship with Quiz
   choices  Choice[] // One-to-Many relationship with Choice
   answers  Answer[] // Fix: Establish bidirectional relation with Answer
+  Explanation Explanation[] // One-to-Many relationship with Explanation
+}
+
+model Explanation {
+  id         String   @id @default(cuid())
+  explanation String
+  quizResult   QuizResult @relation(fields: [quizResultId], references: [id], onDelete: Cascade)
+  quizResultId String      
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId Int
+  isCorrect  Boolean
+  createdAt  DateTime @default(now())
 }
 
 model Choice {
@@ -56,6 +68,7 @@ model QuizResult {
   score       Int // Total correct answers
   createdAt   DateTime @default(now())
   isCompleted Boolean  @default(false)
+  explanation Explanation[] // One-to-Many relationship with Explanation
 }
 
 model Answer {
